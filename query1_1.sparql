@@ -1,0 +1,59 @@
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix cv: <http://vision.semkg.org/onto/v0.1/>
+
+SELECT ?image ?path ?x ?y ?w ?h ?label ?catId ?width ?height ?area
+{
+    {
+        SELECT ?image ?path ?x ?y ?w ?h ?label ?catId ?width ?height ?area
+        {
+
+        ?annotation a cv:Annotation.
+        ?annotation cv:hasAnnotatedObject ?cat.
+        ?cat cv:hasId ?catId.
+        ?annotation cv:isAnnotationOfImage ?image.
+        ?image cv:hasFileName ?fineName.
+        ?image cv:hasLocalPath ?path.
+        ?cat cv:hasLabel ?label.
+        ?annotation cv:hasBox ?box.
+        ?box cv:centerX ?x.
+        ?box cv:centerY ?y.
+        ?box cv:hasWidth ?w.
+        ?box cv:hasHeight ?h.
+        ?image cv:hasWidth ?width
+        ?image cv:hasHeight ?height
+        ?annotation cv:hasArea ?area
+               
+        FILTER (?label = "car")
+
+        }
+        LIMIT 100
+    }
+    
+    UNION {
+        
+        SELECT ?image ?path ?x ?y ?w ?h ?label ?catId ?width ?height ?area
+        {
+
+        ?annotation a cv:Annotation.
+        ?annotation cv:hasAnnotatedObject ?cat.
+        ?cat cv:hasId ?catId.
+        ?annotation cv:isAnnotationOfImage ?image.
+        ?image cv:hasFileName ?fineName.
+        ?image cv:hasLocalPath ?path.
+        ?cat cv:hasLabel ?label.
+        ?annotation cv:hasBox ?box.
+        ?box cv:centerX ?x.
+        ?box cv:centerY ?y.
+        ?box cv:hasWidth ?w.
+        ?box cv:hasHeight ?h.
+        ?image cv:hasWidth ?width
+        ?image cv:hasHeight ?height
+        ?annotation cv:hasArea ?area
+               
+        FILTER (?label = "truck")
+
+        }
+        LIMIT 100
+    }
+}

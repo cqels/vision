@@ -1,0 +1,29 @@
+prefix cvds: <http://vision.semkg.org/dataset/>
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix cv: <http://vision.semkg.org/onto/v0.1/>
+
+SELECT DISTINCT ?annotation
+{
+    {
+        SELECT DISTINCT ?annotation {
+            ?annotation cv:hasAnnotatedObject ?cat.
+            ?cat cv:hasLabel ?label.
+            ?image cv:hasAnnotation ?annotation.
+            cvds:coco cv:containsImage ?image.
+            FILTER (?label = "person")
+        }
+        LIMIT 10000
+    }
+    UNION {
+        SELECT DISTINCT ?annotation {
+            ?annotation cv:hasAnnotatedObject ?cat.
+            ?cat cv:hasLabel ?label.
+            ?image cv:hasAnnotation ?annotation.
+            ?image cv:hasLocalPath ?path.
+            cvds:kitti cv:containsImage ?image.
+            FILTER (?label = "pedestrian")
+        }
+        LIMIT 10000
+    }
+}
