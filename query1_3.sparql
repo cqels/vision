@@ -1,0 +1,13 @@
+#Query 1000 images, each image has atleast a label car
+
+prefix cv: <http://vision.semkg.org/onto/v0.1/>
+
+SELECT DISTINCT ?image
+{
+    ?image a cv:Image.
+    ?image cv:hasAnnotation ?annotation.
+    ?annotation cv:hasAnnotatedObject ?cat.
+    ?cat cv:hasLabel ?label.
+    FILTER (?label = "car")
+}
+LIMIT 2

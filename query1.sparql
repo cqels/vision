@@ -1,0 +1,12 @@
+prefix cv: <http://vision.semkg.org/onto/v0.1/>
+
+SELECT ?image
+{
+    ?annotation a cv:Annotation.
+    ?annotation cv:isAnnotationOfImage ?image.
+    ?annotation cv:hasAnnotatedObject ?cat.
+    ?cat cv:hasId ?catId.
+    ?cat cv:hasLabel ?label.
+    FILTER (?label = "car")
+}
+LIMIT 100
