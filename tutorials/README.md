@@ -1,1 +1,1 @@
-Tutorial 1: https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorial1.ipynb
+Tutorial 1: https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorial.ipynb
