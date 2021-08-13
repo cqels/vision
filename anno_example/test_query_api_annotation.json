@@ -1,0 +1,55 @@
+{
+  "images": [
+    {
+      "id": 555597,
+      "file_name": "000000555597.jpg",
+      "image_path": "/data/image_dataset/coco/000000555597.jpg",
+      "url": "http://farm4.staticflickr.com/3594/3401214437_07a7c97a29_z.jpg",
+      "width": 640,
+      "height": 517
+    },
+    {
+      "id": 260266,
+      "file_name": "000000260266.jpg",
+      "image_path": "/data/image_dataset/coco/000000260266.jpg",
+      "url": "http://farm3.staticflickr.com/2690/4504502338_245f6e1906_z.jpg",
+      "width": 479,
+      "height": 640
+    }
+  ],
+  "annotations": [
+    {
+      "id": 0,
+      "image_id": 555597,
+      "bbox": [
+        510.88,
+        381.13,
+        107.34,
+        29.43
+      ],
+      "category_id": 0,
+      "area": 3159.016,
+      "iscrowd": 0
+    },
+    {
+      "id": 1,
+      "image_id": 260266,
+      "bbox": [
+        51.39,
+        516.24,
+        73.8,
+        35.73
+      ],
+      "category_id": 0,
+      "area": 2636.874,
+      "iscrowd": 0
+    }
+  ],
+  "categories": [
+    {
+      "id": 0,
+      "name": "car",
+      "supercategory": "Thing"
+    }
+  ]
+}

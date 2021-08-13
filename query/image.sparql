@@ -1,9 +1,0 @@
-prefix cv: <http://vision.semkg.org/onto/v0.1/>
-
-SELECT ?fileName ?path ?w ?h
-{
-    ?image cv:hasFileName ?fileName.
-    ?image cv:hasLocalPath ?path.
-    ?image cv:hasWidth ?w.
-    ?image cv:hasHeight ?h.
-}
