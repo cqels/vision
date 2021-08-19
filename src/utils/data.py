@@ -21,19 +21,19 @@ def prepare_data(images, DATA_ROOT_PATH="/mnt"):
         tmp.pop()
         path = DATA_ROOT_PATH + "/".join(tmp)
         if tmp[-1] not in dataset_list:
-            dataset_list[tmp[-1]] = {'isExist': False,
-                                     'path': path,
+            dataset_list[tmp[-1]] = {'path': path,
                                      'missing': []}
 
-        if os.path.isdir(path):
-            dataset_list[tmp[-1]]['isExist'] = True
+        if not os.path.isdir(path):
+            os.mkdirs(path)
+
         if not os.path.exists(DATA_ROOT_PATH + image['image_path']):
             isSuccess = False
             if image['url']:
                 print("Image", image['file_name'],
                       'is available online. Downloading..')
                 try:
-                    urllib.request.urlretrieve(image['url'], "00000001.jpg")
+                    urllib.request.urlretrieve(image['url'], )
                     isSuccess = True
                     print(image['file_name'], "downloaded!")
                 except:
@@ -42,14 +42,10 @@ def prepare_data(images, DATA_ROOT_PATH="/mnt"):
             if not isSuccess:
                 dataset_list[tmp[-1]]['missing'].append(image)
     for dataset in dataset_list:
-        if not dataset_list[dataset]['isExist']:
-            print(dataset, "is not exist! Please download and put it at",
-                  dataset_list[dataset]['path'])
-        else:
-            if len(dataset_list[dataset]['missing']) > 0:
-                print("The following images are not exists. Please download and put them at",
-                      dataset_list[dataset]['path'], ":")
-                print(",".join(dataset_list[dataset]['missing']))
+        if len(dataset_list[dataset]['missing']) > 0:
+            print("The following images of the ", dataset, "dataset are not exists. Please download and put them at",
+                  dataset_list[dataset]['path'], ":")
+            print(",".join(dataset_list[dataset]['missing']))
 
     print("dataset folder structure should be prepare as bellow:")
     print("DATA_ROOT_PATH/data/image_dataset")
