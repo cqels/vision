@@ -7,7 +7,7 @@ def list_datasets():
     return DATASETS
 
 
-def prepare_data(DATA_ROOT_PATH="/mnt", images):
+def prepare_data(images, DATA_ROOT_PATH="/mnt"):
     dataset_list = {}
     for image in images:
         tmp = image['image_path'].split("/")
