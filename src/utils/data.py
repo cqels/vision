@@ -7,12 +7,12 @@ def list_datasets():
     return DATASETS
 
 
-def prepare_data(images):
+def prepare_data(DATA_ROOT_PATH="/mnt", images):
     dataset_list = {}
     for image in images:
         tmp = image['image_path'].split("/")
         tmp.pop()
-        path = "/".join(tmp)
+        path = DATA_ROOT_PATH + "/".join(tmp)
         if tmp[-1] not in dataset_list:
             dataset_list[tmp[-1]] = {'isExist': False,
                                      'path': path,
@@ -20,7 +20,7 @@ def prepare_data(images):
 
         if os.path.isdir(path):
             dataset_list[tmp[-1]]['isExist'] = True
-        if not os.path.exists(image['image_path']):
+        if not os.path.exists(DATA_ROOT_PATH + image['image_path']):
             dataset_list[tmp[-1]]['missing'].append(image)
     for dataset in dataset_list:
         if not dataset_list[dataset]['isExist']:
