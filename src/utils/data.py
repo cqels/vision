@@ -25,7 +25,7 @@ def prepare_data(images, DATA_ROOT_PATH="/mnt"):
                                      'missing': []}
 
         if not os.path.isdir(path):
-            os.mkdirs(path)
+            os.mkdir(path)
 
         if not os.path.exists(DATA_ROOT_PATH + image['image_path']):
             isSuccess = False
