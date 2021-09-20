@@ -23,8 +23,8 @@ def prepare_data(images, DATA_ROOT_PATH=None):
     for image in images:
         tmp = image['image_path'].split("/")
         tmp.pop()
-        path = DATA_ROOT_PATH + image['image_path']
-        dataset = tmp[-2]
+        path = DATA_ROOT_PATH + tmp.join("/")
+        dataset = tmp[-1]
         if dataset not in dataset_list:
             dataset_list[dataset] = {'path': path,
                                      'missing': []}
