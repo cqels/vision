@@ -1,5 +1,6 @@
 import os
 import urllib.request
+import requests
 
 DATASETS = ['cityscapes', 'coco', 'detrac', 'kitti', 'oid', 'visual_genome']
 DATASETS_URLS = {'cityscapes': {'train': '', 'val': '', 'tearm_and_conditions': ''},
@@ -14,14 +15,15 @@ def list_datasets():
     return DATASETS
 
 
-def prepare_data(images, DATA_ROOT_PATH="/mnt"):
+def prepare_data(images, DATA_ROOT_PATH=None):
     dataset_list = {}
     for image in images:
         tmp = image['image_path'].split("/")
         tmp.pop()
         path = DATA_ROOT_PATH + "/".join(tmp)
-        if tmp[-1] not in dataset_list:
-            dataset_list[tmp[-1]] = {'path': path,
+        dataset = tmp[-1]
+        if dataset not in dataset_list:
+            dataset_list[dataset] = {'path': path,
                                      'missing': []}
 
         if not os.path.isdir(path):
@@ -29,16 +31,19 @@ def prepare_data(images, DATA_ROOT_PATH="/mnt"):
 
         if not os.path.exists(DATA_ROOT_PATH + image['image_path']):
             isSuccess = False
-            if image['url']:
-                print("Image", image['file_name'],
-                      'is available online. Downloading..')
-                try:
-                    urllib.request.urlretrieve(image['url'], )
-                    isSuccess = True
-                    print(image['file_name'], "downloaded!")
-                except:
-                    isSuccess = False
-                    print(image['file_name'], "download failed!")
+            if dataset == "visual_genome":
+
+            else:
+                if image['url']:
+                    print("Image", image['file_name'],
+                          'is available online. Downloading..')
+                    try:
+                        urllib.request.urlretrieve(image['url'], )
+                        isSuccess = True
+                        print(image['file_name'], "downloaded!")
+                    except:
+                        isSuccess = False
+                        print(image['file_name'], "download failed!")
             if not isSuccess:
                 dataset_list[tmp[-1]]['missing'].append(image)
     for dataset in dataset_list:
