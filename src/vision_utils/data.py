@@ -16,12 +16,15 @@ def list_datasets():
 
 
 def prepare_data(images, DATA_ROOT_PATH=None):
+    if not DATA_ROOT_PATH:
+        print("DATA path did not set! Path will set default at /tmp")
+        DATA_ROOT_PATH = "/tmp"
     dataset_list = {}
     for image in images:
         tmp = image['image_path'].split("/")
         tmp.pop()
-        path = DATA_ROOT_PATH + "/".join(tmp)
-        dataset = tmp[-1]
+        path = DATA_ROOT_PATH + image['image_path']
+        dataset = tmp[-2]
         if dataset not in dataset_list:
             dataset_list[dataset] = {'path': path,
                                      'missing': []}
