@@ -32,7 +32,8 @@ def prepare_data(images, DATA_ROOT_PATH=None):
         if not os.path.exists(DATA_ROOT_PATH + image['image_path']):
             isSuccess = False
             if dataset == "visual_genome":
-
+                # perform download
+                pass
             else:
                 if image['url']:
                     print("Image", image['file_name'],
