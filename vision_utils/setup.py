@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="Vision Utils",
+    name="vision_utils",
     version="0.0.1",
     author="Anh Le-Tuan, Trung-Kien Tran, Duc Manh Nguyen, Jicheng Yuan, Manfred Hauswirth and Danh Le Phuoc",
     author_email="",
