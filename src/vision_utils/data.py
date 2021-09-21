@@ -20,6 +20,7 @@ def prepare_data(images, DATA_ROOT_PATH=None):
         print("DATA path did not set! Path will set default at /tmp")
         DATA_ROOT_PATH = "/tmp"
     dataset_list = {}
+    is_ok = True
     for image in images:
         tmp = image['image_path'].split("/")
         tmp.pop()
@@ -30,7 +31,7 @@ def prepare_data(images, DATA_ROOT_PATH=None):
                                      'missing': []}
 
         if not os.path.isdir(path):
-            os.mkdir(path)
+            os.makedirs(path, exist_ok=True)
 
         if not os.path.exists(DATA_ROOT_PATH + image['image_path']):
             isSuccess = False
@@ -49,19 +50,21 @@ def prepare_data(images, DATA_ROOT_PATH=None):
                         isSuccess = False
                         print(image['file_name'], "download failed!")
             if not isSuccess:
-                dataset_list[tmp[-1]]['missing'].append(image)
+                dataset_list[tmp[-1]]['missing'].append(image['file_name'])
     for dataset in dataset_list:
         if len(dataset_list[dataset]['missing']) > 0:
-            print("The following images of the ", dataset, "dataset are not exists. Please download and put them at",
+            is_ok = False
+            print("\nThe following images of the ", dataset, "dataset are not exists. Please download and put them at",
                   dataset_list[dataset]['path'], ":")
-            print(",".join(dataset_list[dataset]['missing']))
-
-    print("dataset folder structure should be prepare as bellow:")
-    print("DATA_ROOT_PATH/data/image_dataset")
-    print("  |-- dataset name")
-    print("    |-- images")
-    print("      |-- xxxxxx.jpg")
-    print("      |-- xxxxx2.jpg")
-    print("      |-- ...")
-    print("    |-- annotations")
-    print("      |-- annotation1.json")
+            print(", ".join(dataset_list[dataset]['missing']))
+            print("")
+    if not is_ok:
+        print("\nDataset folder structure should be prepare as bellow:")
+        print("DATA_ROOT_PATH/data/image_dataset")
+        print("  |-- dataset name")
+        print("    |-- images")
+        print("      |-- xxxxxx.jpg")
+        print("      |-- xxxxx2.jpg")
+        print("      |-- ...")
+        print("    |-- annotations")
+        print("      |-- annotation1.json")
