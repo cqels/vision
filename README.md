@@ -1,7 +1,3 @@
-# vision
+# Vision
 
-# Tutorial 1:
-
-Some descriptions go here !!!
-
-Links
+VisionKG API
