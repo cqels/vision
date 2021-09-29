@@ -1,3 +1,3 @@
-# Vision Kwowledge Graph
+# VisionKG: Vision Kwowledge Graph
 
 
