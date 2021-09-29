@@ -1,4 +1,4 @@
-# VisionKG: Vision Kwowledge Graph
+# VisionKG: Vision Knowledge Graph
 Official Repository of [VisionKG](https://vision.semkg.org/) by
 
 Anh Le-Tuan, Trung-Kien Tran, Manh Nguyen-Duc, Jicheng Yuan, Manfred Hauswirth and Danh Le-Phuoc. 
