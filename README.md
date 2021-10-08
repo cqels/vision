@@ -56,13 +56,17 @@ VisionKG_meet_MMclassification: [![Open in colab](https://colab.research.google.
 
 ## Citation
 
-If you use VisionKG in your research, please cite this project.
+If you use VisionKG in your research, please cite our work.
 
 ```
-@mics{VisionKG,
-  title   = {VisionKG: Vision Knowledge Graph},
-  author  = {Anh, Le-Tuan and Trung-Kien, Tran and Manh, Nguyen-Duc and Jicheng, Yuan and Manfred, Hauswirth and Danh, Le-Phuoc},
-  howpublished= {\url{https://github.com/cqels/vision}},
-  year={2021}
-}
+@inproceedings{Anh:2021,
+  author    = {Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
+               Trung Kien-Tran and
+               Manfred, Hauswirth and Danh, Le-Phuoc
+               },
+  title     = {VisionKG: Towards A Unified Vision Knowledge Graph},
+  booktitle = {Proceedings of the {ISWC} 2021 Posters {\&} Demonstrations Track},
+  series    = {{CEUR} Workshop Proceedings},
+  year      = {2021},
+  }
 ```
