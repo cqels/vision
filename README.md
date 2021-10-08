@@ -14,7 +14,7 @@ VisionKG is an RDF-based knowledge and built upon the FAIR principles. It provid
 The Overview of VisionKG
 </p>
 
-Demo for VisionKG →
+Demo for VisionKG:
 
 [![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://user-images.githubusercontent.com/87916250/136581046-6192174b-d306-4c6c-9670-c654d5728e0e.mp4)
 
