@@ -16,7 +16,7 @@ The Overview of VisionKG
 
 Demo for VisionKG:
 
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://user-images.githubusercontent.com/87916250/136581046-6192174b-d306-4c6c-9670-c654d5728e0e.mp4)
+[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://user-images.githubusercontent.com/87916250/136588806-9ffc345d-8341-4802-a400-9b4a9b05d74d.mp4)
 
 As of August 2021, VisionKG already consists of 67 million triples, 239 thousand images, and nearly one million annotations. 
 For the pre-trained models, besides the yolo series, now it also supports other one- or two-stage architectures such as EfficientDet, Faster-RCNN, and so on.
