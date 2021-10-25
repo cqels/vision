@@ -41,13 +41,13 @@ def collate_fn(batch):
 
 
 def get_model_detection(num_classes, model='fasterrcnn_resnet50_fpn'):
-    if model != 'fasterrcnn_resnet50_fpn':
-        model = torchvision.models.detection.__dict__[model](num_classes=num_classes, pretrained=True)
-    else:
-        model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True, progress=True,
-                                                                     pretrained_backbone=True)
-        in_features = model.roi_heads.box_predictor.cls_score.in_features
-        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+    # if model != 'fasterrcnn_resnet50_fpn':
+    #     model = torchvision.models.detection.__dict__[model](num_classes=num_classes, pretrained=False)
+    # else:
+    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True, progress=True,
+                                                                 pretrained_backbone=True)
+    in_features = model.roi_heads.box_predictor.cls_score.in_features
+    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
     return model
 
 
