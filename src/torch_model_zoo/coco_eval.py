@@ -4,10 +4,9 @@ from contextlib import redirect_stdout
 
 import numpy as np
 import torch
-from .coco_utils import all_gather
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
-
+import torch.distributed as dist
 
 class CocoEvaluator:
     def __init__(self, coco_gt, iou_types):
@@ -88,6 +87,28 @@ def convert_to_xywh(boxes):
     xmin, ymin, xmax, ymax = boxes.unbind(1)
     return torch.stack((xmin, ymin, xmax - xmin, ymax - ymin), dim=1)
 
+
+def is_dist_avail_and_initialized():
+    if not dist.is_available():
+        return False
+    if not dist.is_initialized():
+        return False
+    return True
+
+
+def get_world_size():
+    if not is_dist_avail_and_initialized():
+        return 1
+    return dist.get_world_size()
+
+
+def all_gather(data):
+    world_size = get_world_size()
+    if world_size == 1:
+        return [data]
+    data_list = [None] * world_size
+    dist.all_gather_object(data_list, data)
+    return data_list
 
 def merge(img_ids, eval_imgs):
     all_img_ids = all_gather(img_ids)
