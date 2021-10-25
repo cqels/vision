@@ -211,7 +211,7 @@ def set_params(path_to_anno_mixedDatasets, num_categories, nms_categories):
     # set deafalt params
     lr = 0.005
     seed = 12345
-    batch_size = 2
+    batch_size = 4
     start_epoch = 0
     total_epochs = 13
     eval_only = False
