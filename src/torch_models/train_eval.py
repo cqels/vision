@@ -1,19 +1,17 @@
 import datetime
 import os
 import time
-import coco_utils
-import presets
+from .presets import DetectionPresetTrain, DetectionPresetEval
 import random
 import numpy as np
 import torch
 import errno
-from utils import dataset_split, check_download_images
 import torch.utils.data
 import torchvision
 import torchvision.models.detection
 import torchvision.models.detection.mask_rcnn
-from coco_utils import get_coco, train_one_epoch, evaluate, showbbox, save_on_master
-from group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
+from .coco_utils import get_coco, train_one_epoch, evaluate, showbbox, save_on_master, plot_loss_mAP
+from .group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
 
@@ -35,7 +33,7 @@ def mkdir(path):
 
 
 def get_transform(train, data_augmentation):
-    return presets.DetectionPresetTrain(data_augmentation) if train else presets.DetectionPresetEval()
+    return DetectionPresetTrain(data_augmentation) if train else DetectionPresetEval()
 
 
 def collate_fn(batch):
@@ -161,6 +159,6 @@ def pipeline(params):
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     for img_num, (img, _) in enumerate(dataset_test):
-        coco_utils.showbbox(model, img, img_num, device, cat_nms=cat_nms)
-    coco_utils.plot_loss_mAP(loss_metrics, mAP)
+        showbbox(model, img, img_num, device, cat_nms=cat_nms)
+    plot_loss_mAP(loss_metrics, mAP)
     print("Training time {}".format(total_time_str))

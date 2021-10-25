@@ -11,10 +11,10 @@ import torch
 import torchvision.models.detection.mask_rcnn
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
-from coco_eval import CocoEvaluator
+from .coco_eval import CocoEvaluator
 import torch.utils.data
 import torchvision
-import transforms as T
+from . import transforms as T
 from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 from collections import defaultdict, deque
