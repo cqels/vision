@@ -12,7 +12,7 @@ import torchvision
 import torchvision.models.detection
 import torchvision.models.detection.mask_rcnn
 from .coco_utils import get_coco, train_one_epoch, evaluate, showbbox, save_on_master, plot_loss_mAP
-from group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
+from .group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
 
