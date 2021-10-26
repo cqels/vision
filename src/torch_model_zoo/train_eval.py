@@ -66,12 +66,12 @@ def get_model_detection(num_classes, model='retinanet_resnet50_fpn'):
 
 def print_models():
     print("TILL NOW CONSISTS MODELS: \n"
+          "RetinaNet: \n"
+          "--- retinanet_resnet50_fpn (default) \n"
           "FRCNN Series: \n"
-          "--- fasterrcnn_resnet50_fpn (default) \n"
+          "--- fasterrcnn_resnet50_fpn \n"
           "--- fasterrcnn_mobilenet_v3_large_fpn \n"
           "--- fasterrcnn_mobilenet_v3_large_320_fpn \n"
-          "RetinaNet: \n"
-          "--- retinanet_resnet50_fpn \n"
 
           "BELOW MODELS WILL BE ADDED SOON: \n"
           "SSD: \n"
