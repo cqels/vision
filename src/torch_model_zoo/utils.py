@@ -274,7 +274,7 @@ def draw_box(coordinates, img_raw, cat_dict):
     plt.show()
 
 
-def show_annotation(annotations_dir, cat_nms, show_num=6):
+def show_annotation(annotations_dir, cat_nms, show_num=6, img_dir=None):
     coco = COCO(annotations_dir)
     cat_ids = coco.getCatIds(catNms=cat_nms)
 
@@ -291,8 +291,10 @@ def show_annotation(annotations_dir, cat_nms, show_num=6):
             break
         img = coco.loadImgs(imgId)[0]
         dim = (img['width'], img['height'])
-        img_prefix = img['image_path']
-        image_path = os.path.join(img_prefix, img['file_name'])
+        if img_dir:
+            image_path = os.path.join(img_dir, img['file_name'])
+        else:
+            image_path = img['image_path']
         annIds = coco.getAnnIds(imgIds=img['id'], catIds=[], iscrowd=None)
         anns = coco.loadAnns(annIds)
         coordinates = []
