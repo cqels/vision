@@ -323,6 +323,8 @@ def show_cat_distribution(annotations_dir, cat_nms):
         annId = coco.getAnnIds(imgIds=imgId, catIds=catId, iscrowd=None)
         img_num.append(len(imgId))
         bbox_num.append(len(annId))
+
+    # set params
     plt.rcParams['font.size'] = font_size
     plt.rcParams["font.sans-serif"] = ["SimHei"]
     plt.rcParams["axes.unicode_minus"] = False

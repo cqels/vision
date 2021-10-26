@@ -83,7 +83,7 @@ def print_models():
           "--- keypointrcnn_resnet50_fpn")
 
 
-def pipeline(params):
+def train_eval_pipeline(params):
     print("SETTED PARAMS:")
     for k, v in params.items():
         print(k, " : ", v)
