@@ -42,7 +42,7 @@ For that, we also provides three pipelines for image recognition and obejct dete
 
 VisionKG_meet_MMdetection: [![Open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_mmdetection.ipynb)
 
-VisionKG_meet_MMdetection: [![Open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_pytorch_build_in_models_.ipynb)
+VisionKG_meet_Pytorch_model_Zoo: [![Open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_pytorch_build_in_models_.ipynb)
 
 ### Image Recognition:
 
