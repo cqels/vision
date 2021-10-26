@@ -207,24 +207,23 @@ def prepare_for_training(path_to_anno_mixedDatasets, anno):
 
 
 def set_params(path_to_anno_mixedDatasets, num_categories, nms_categories):
-
     # set deafalt params
     lr = 0.005
-    seed = 12345
+    seed = 65375
     batch_size = 4
     start_epoch = 0
     total_epochs = 13
     eval_only = False
-    output_dir = './save_model'
-    model = 'fasterrcnn_resnet50_fpn'
-    weight_pth = './save_model/final.pth'
+    output_dir = 'save_model'
+    model = 'retinanet_resnet50_fpn'
+    weight_pth = 'save_model/final.pth'
     train_val_test = ['train.json', 'val.json', 'test.json']
     dataset_split(path_to_anno_mixedDatasets, train_val_test, ratio=0.8)
 
     params = {'imgs_path': '/data/image_dataset/coco', 'train_anno': 'data/mixedDatasets/train.json',
               'test_anno': 'data/mixedDatasets/val.json',
               'model': model, 'weight_pth': weight_pth,
-              'output_dir': output_dir, 'batch_size': batch_size, 'learning_rate':lr,
+              'output_dir': output_dir, 'batch_size': batch_size, 'learning_rate': lr,
               'epochs': total_epochs, 'num_cat': num_categories, 'test_only': eval_only,
               "setup_seed": seed, 'start_epoch': start_epoch,
               'cat_nms': nms_categories}
@@ -241,3 +240,26 @@ def set_params(path_to_anno_mixedDatasets, num_categories, nms_categories):
           "cat_nms: name of each category")
 
     return params
+
+
+def show_annotation(cat_nms):
+    """
+    randomly choose some images with annotation and visualize them.
+    Args:
+        cat_nms: categoreis names in the format ['car', 'truck']
+
+    Returns:
+
+    """
+
+    pass
+
+
+def label_filter(cat_nms):
+    """
+    remove the categories which are not need any more.
+    Args:
+        cat_nms: categoreis names which need to be saved, format ['car', 'truck']
+    Returns:
+
+    """
