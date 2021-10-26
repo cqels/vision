@@ -84,31 +84,30 @@ def print_models():
 
 
 def pipeline(params):
-
     print("SETTED PARAMS:")
     for k, v in params.items():
-        print(k.upper(), " : ", v)
+        print(k, " : ", v)
 
     print(print_models())
 
     # load params
-    epochs = params["epochs"]
-    cat_nms = params['cat_nms']
-    lr = params['learning_rate']
-    test_only = params["test_only"]
-    model_pth = params['weight_pth']
-    setup_seed(params['setup_seed'])
-    output_dir = params['output_dir']
-    batch_size = params['batch_size']
-    start_epoch = params["start_epoch"]
-    num_classes = params['num_cat'] + 1
+    epochs = params["EPOCHS"]
+    cat_nms = params['CAT_NMS']
+    lr = params['LEARNING_RATE']
+    test_only = params["TEST_ONLY"]
+    model_pth = params['WEIGHT_PTH']
+    setup_seed(params['SETUP_SEED'])
+    output_dir = params['OUTPUT_DIR']
+    batch_size = params['BATCH_SIZE']
+    start_epoch = params["START_EPOCH"]
+    num_classes = params['NUM_CAT'] + 1
 
-    mkdir(params['output_dir'])
+    mkdir(output_dir)
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     print("Loading data")
-    dataset_test = get_coco(params['imgs_path'], params['test_anno'], get_transform(False, 'hflip'))
+    dataset_test = get_coco(params['IMGS_PATH'], params['TEST_ANNO'], get_transform(False, 'hflip'))
 
     print("Creating data loaders")
     test_sampler = torch.utils.data.SequentialSampler(dataset_test)
@@ -126,7 +125,7 @@ def pipeline(params):
             showbbox(model_saved, img, img_num, device, threshold=0.7, cat_nms=cat_nms)
         return
     else:
-        dataset_train = get_coco(params['imgs_path'], params['train_anno'], get_transform(True, 'hflip'), train=True)
+        dataset_train = get_coco(params['IMGS_PATH'], params['TRAIN_ANNO'], get_transform(True, 'hflip'), train=True)
         train_sampler = torch.utils.data.RandomSampler(dataset_train)
         group_ids = create_aspect_ratio_groups(dataset_train, k=3)
         train_batch_sampler = GroupedBatchSampler(train_sampler, group_ids, batch_size)
@@ -134,7 +133,7 @@ def pipeline(params):
         data_loader = torch.utils.data.DataLoader(
             dataset_train, batch_sampler=train_batch_sampler, num_workers=4, collate_fn=collate_fn
         )
-        model = get_model_detection(num_classes, model=params['model'])
+        model = get_model_detection(num_classes, model=params['MODEL'])
 
     model.to(device)
 
@@ -165,7 +164,7 @@ def pipeline(params):
             checkpoint = {
                 "model": model_without_ddp.state_dict(),
                 "optimizer": optimizer.state_dict(),
-                # "lr_scheduler": lr_scheduler.state_dict(),
+                "lr_scheduler": lr_scheduler.state_dict(),
                 "epoch": epochs,
             }
             save_on_master(checkpoint, os.path.join(output_dir, "final.pth"))

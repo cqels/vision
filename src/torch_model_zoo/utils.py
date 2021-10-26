@@ -220,24 +220,24 @@ def set_params(path_to_anno_mixedDatasets, num_categories, nms_categories):
     train_val_test = ['train.json', 'val.json', 'test.json']
     dataset_split(path_to_anno_mixedDatasets, train_val_test, ratio=0.8)
 
-    params = {'imgs_path': '/data/image_dataset/coco', 'train_anno': 'data/mixedDatasets/train.json',
-              'test_anno': 'data/mixedDatasets/val.json',
-              'model': model, 'weight_pth': weight_pth,
-              'output_dir': output_dir, 'batch_size': batch_size, 'learning_rate': lr,
-              'epochs': total_epochs, 'num_cat': num_categories, 'test_only': eval_only,
-              "setup_seed": seed, 'start_epoch': start_epoch,
-              'cat_nms': nms_categories}
+    params = {'IMGS_PATH': '/data/image_dataset/coco', 'TRAIN_ANNO': 'data/mixedDatasets/train.json',
+              'TEST_ANNO': 'data/mixedDatasets/val.json',
+              'MODEL': model, 'WEIGHT_PTH': weight_pth,
+              'OUTPUT_DIR': output_dir, 'BATCH_SIZE': batch_size, 'LEARNING_RATE': lr,
+              'EPOCHS': total_epochs, 'NUM_CAT': num_categories, 'TEST_ONLY': eval_only,
+              "SETUP_SEED": seed, 'START_EPOCH': start_epoch,
+              'CAT_NMS': nms_categories}
 
     print("SETTED PARAMS:")
     for k, v in params.items():
-        print(k.upper(), " : ", v)
+        print(k, " : ", v)
 
     print("Params which may need to be reset manually:"
-          "imgs_path: path to your images"
-          "train_anno: path to your training annotations"
-          "test_anno: path to your test annotations"
-          "num_cat: number of categories your would like to train"
-          "cat_nms: name of each category")
+          "IMGS_PATH: path to your images"
+          "TRAIN_ANNO: path to your training annotations"
+          "TEST_ANNO: path to your test annotations"
+          "NUM_CAT: number of categories your would like to train"
+          "CAT_NMS: name of each category")
 
     return params
 
