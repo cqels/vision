@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 import funcy
 from tabulate import tabulate
@@ -8,6 +9,10 @@ import itertools, os, json, urllib.request
 from tqdm import tqdm
 from os.path import join as opj
 import cv2
+from pycocotools.coco import COCO
+from .coco_utils import color_val_matplotlib
+from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon
 
 coloredlogs.install()
 logging.basicConfig(format='[%(asctime)s : %(message)s %(filename)s]',
@@ -173,27 +178,6 @@ def checkpoint_verify(work_dir, ckpt_file=None):
     return os.path.abspath(ckpt_file)
 
 
-def images_categories_distribution(path_to_anno):
-    """
-        analysis the images and categories distributions of mixedDatasets
-        1. draw a pie figure for images distribution
-        2. draw a histogram for categories distribution
-        3. .. other better visualization and analysis for mixedDatasets
-        4. could also be used to analysis the detected performance in different datasets
-		Note: which need to the source of specific image
-    """
-
-    pass
-
-
-def image_from_google_drive(img_info):
-    """
-		also need to the source of specific image
-    """
-
-    pass
-
-
 def prepare_for_training(path_to_anno_mixedDatasets, anno):
     os.makedirs(os.path.abspath(os.path.join(path_to_anno_mixedDatasets, "..")), exist_ok=True)
     with open(path_to_anno_mixedDatasets, "w") as f:
@@ -242,14 +226,139 @@ def set_params(path_to_anno_mixedDatasets, num_categories, nms_categories):
     return params
 
 
-def show_annotation(cat_nms):
+def draw_box(coordinates, img_raw, cat_dict):
+    img = np.array(img_raw)
+    win_name = ''
+    fig = plt.figure(win_name, frameon=False)
+    plt.title(win_name)
+
+    dpi = fig.get_dpi()
+    EPS = 1e-2
+    width, height = img.shape[1], img.shape[0]
+    fig.set_size_inches((width + EPS) / dpi, (height + EPS) / dpi)
+    plt.subplots_adjust(left=0, right=1, bottom=0, top=1)
+    ax = plt.gca()
+    ax.axis('off')
+    polygons = []
+    color = []
+    bbox_color = color_val_matplotlib((30, 188, 50))
+    text_color = color_val_matplotlib((30, 188, 100))
+    thickness = 2
+    for coordinate in coordinates:
+        xmin, ymin, xmax, ymax, catId = map(int, coordinate)
+        if catId not in list(cat_dict.keys()):
+            continue
+        poly = [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
+        np_poly = np.array(poly).reshape((4, 2))
+        polygons.append(Polygon(np_poly))
+        color.append(bbox_color)
+        label_text = cat_dict[catId]
+        ax.text(
+            xmin,
+            ymin,
+            f'{str(label_text)}',
+            bbox={
+                'facecolor': 'black',
+                'alpha': 0.8,
+                'pad': 0.7,
+                'edgecolor': 'none'
+            },
+            color=text_color,
+            fontsize=13,
+            verticalalignment='top',
+            horizontalalignment='left')
+    plt.imshow(img)
+    p = PatchCollection(
+        polygons, facecolor='none', edgecolors=color, linewidths=thickness)
+    ax.add_collection(p)
+    plt.show()
+
+
+def show_annotation(annotations_dir, cat_nms, show_num=6):
+    coco = COCO(annotations_dir)
+    cat_ids = coco.getCatIds(catNms=cat_nms)
+
+    categories = coco.loadCats(cat_ids)
+    cat_dict = {}
+    for category in categories:
+        cat_dict[category['id']] = category['name']
+    imgIds = []
+    for cat_id in cat_ids:
+        imgIds.extend(coco.getImgIds(catIds=cat_id))
+    list(set(imgIds))
+    for i, imgId in enumerate(imgIds):
+        if i == show_num:
+            break
+        img = coco.loadImgs(imgId)[0]
+        dim = (img['width'], img['height'])
+        img_prefix = img['image_path']
+        image_path = os.path.join(img_prefix, img['file_name'])
+        annIds = coco.getAnnIds(imgIds=img['id'], catIds=[], iscrowd=None)
+        anns = coco.loadAnns(annIds)
+        coordinates = []
+        if not os.access(image_path, mode=os.R_OK):
+            urllib.request.urlretrieve(img['url'], image_path)
+        img_raw = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
+        img_raw = cv2.resize(img_raw, dim, cv2.INTER_AREA)
+        for j in range(len(anns)):
+            coordinate = anns[j]['bbox']
+            coordinate[2] += coordinate[0]
+            coordinate[3] += coordinate[1]
+            coordinate.append(anns[j]['category_id'])
+            coordinates.append(coordinate)
+        draw_box(coordinates, img_raw, cat_dict)
+
+
+def show_cat_distribution(annotations_dir, cat_nms):
+    plt.figure(figsize=(16, 8))
+    font_size = 20
+    coco = COCO(annotations_dir)
+    cats = coco.loadCats(coco.getCatIds(cat_nms))
+    cat_nms = [cat['name'] for cat in cats]
+    img_num = []
+    bbox_num = []
+    for cat_name in cat_nms:
+        catId = coco.getCatIds(catNms=cat_name)
+        imgId = coco.getImgIds(catIds=catId)
+        annId = coco.getAnnIds(imgIds=imgId, catIds=catId, iscrowd=None)
+        img_num.append(len(imgId))
+        bbox_num.append(len(annId))
+    plt.rcParams['font.size'] = font_size
+    plt.rcParams["font.sans-serif"] = ["SimHei"]
+    plt.rcParams["axes.unicode_minus"] = False
+
+    len_control = np.arange(len(cat_nms))
+    bar_width = 0.35
+
+    plt.bar(len_control, img_num, bar_width, align="center", color="c", label="num_images", alpha=0.6)
+    plt.bar(len_control + bar_width, bbox_num, bar_width, color="b", align="center", label="num_bbox", alpha=0.6)
+
+    plt.xlabel("CATEGORY")
+    plt.ylabel("NUMBER")
+
+    plt.xticks(len_control + bar_width / 2, cat_nms, fontsize=font_size)
+    plt.xticks(fontsize=font_size)
+    plt.legend(fontsize=font_size)
+
+    plt.show()
+
+
+def images_categories_distribution(path_to_anno):
     """
-    randomly choose some images with annotation and visualize them.
-    Args:
-        cat_nms: categoreis names in the format ['car', 'truck']
+        analysis the images and categories distributions of mixedDatasets
+        1. draw a pie figure for images distribution
+        2. draw a histogram for categories distribution
+        3. .. other better visualization and analysis for mixedDatasets
+        4. could also be used to analysis the detected performance in different datasets
+		Note: which need to the source of specific image
+    """
 
-    Returns:
+    pass
 
+
+def image_from_google_drive(img_info):
+    """
+		also need to the source of specific image
     """
 
     pass
