@@ -23,7 +23,7 @@ In the future, VisionKG will integrated more and more triples, images, annotatio
 For the pre-trained models, besides the yolo series, now it also supports other one- or two-stage architectures such as EfficientDet, Faster-RCNN, and so on.
 
 |             | `Triples` | `Images` | `Annotations` |
-|-------------|-------|---------|---------|
+|:-------------:|:-------:|:---------:|:---------:|
 | **08.2021**   | 67M    | 239K      | 1M      |
 | **10.2021** | 140M    | 13M      | 1M      |
 
