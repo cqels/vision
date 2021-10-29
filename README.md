@@ -101,5 +101,5 @@ If you use VisionKG in your research, please cite our work.
   booktitle = {Proceedings of the {ISWC} 2021 Posters & Demonstrations Track},
   series    = {Workshop Proceedings},
   year      = {2021}
-  }
+}
 ```
