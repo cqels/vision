@@ -86,7 +86,7 @@ If you use VisionKG in your research, please cite our work.
   author    = {Trung-Kien, Tran and 
                Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
                Danh, Le-Phuoc},
-  booktitle = {Proceedings of NeurIPS 2021 Workshop on Data-Centric AI}
+  booktitle = {Proceedings of {NeurIPS} 2021 Workshop on Data-Centric AI}
   series    = {Workshop Proceedings},
   year      = {2021}
 }
