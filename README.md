@@ -81,14 +81,14 @@ VisionKG_meet_MMclassification: [![Open in colab](https://colab.research.google.
 If you use VisionKG in your research, please cite our work.
 
 ```
-@article{Kien:2021,
-  title={Fantastic Data and How to Query Them
-  author={Trung-Kien, Tran and 
-          Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
-          Danh, Le-Phuoc},
+@inproceedings{Kien:2021,
+  title     = {Fantastic Data and How to Query Them
+  author    = {Trung-Kien, Tran and 
+               Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
+               Danh, Le-Phuoc},
   booktitle = {Proceedings of NeurIPS 2021 Workshop on Data-Centric AI}
-  series={Workshop Proceedings},
-  year={2021}
+  series    = {Workshop Proceedings},
+  year      = {2021}
 }
 ```
 
