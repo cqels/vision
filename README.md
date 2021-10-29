@@ -30,9 +30,9 @@ For more details, please check the infomation below.
 
 ✅ Faster-RCNN
 
-✅ EfficientDet
-
 ✅ YOLO-Series
+
+✅ EfficientDet
 
 ✅ RetinaNet
 
