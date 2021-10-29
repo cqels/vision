@@ -83,7 +83,7 @@ If you use VisionKG in your research, please cite our work.
 ```
 @inproceedings{Kien:2021,
   title     = {Fantastic Data and How to Query Them},
-  author    = {Trung-Kien, Tran and 
+  author    = {Trung, Kien-Tran and 
                Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
                Danh, Le-Phuoc},
   booktitle = {Proceedings of the {NeurIPS} 2021 Workshop on Data-Centric AI},
@@ -96,7 +96,7 @@ If you use VisionKG in your research, please cite our work.
 @inproceedings{Anh:2021,
   title     = {VisionKG: Towards A Unified Vision Knowledge Graph},
   author    = {Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
-               Trung Kien-Tran and
+               Trung, Kien-Tran and
                Manfred, Hauswirth and Danh, Le-Phuoc},
   booktitle = {Proceedings of the {ISWC} 2021 Posters & Demonstrations Track},
   series    = {Workshop Proceedings},
