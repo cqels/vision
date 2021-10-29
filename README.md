@@ -60,7 +60,9 @@ VisionKG_meet_MMclassification: [![Open in colab](https://colab.research.google.
 
 * [MMdetection](https://github.com/open-mmlab/mmdetection)
 * [MMclassification](https://github.com/open-mmlab/mmclassification)
+* [Pytorch](https://github.com/pytorch/pytorch)
 * [timm](https://github.com/rwightman/pytorch-image-models)
+* [torchvision](https://github.com/pytorch/vision)
 
 ## Citation
 
