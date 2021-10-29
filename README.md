@@ -28,6 +28,7 @@ For more details, please check the infomation below.
 | **08.2021**   | 67M    | 239K      | 1M      |
 | **10.2021** | 140M    | 13M      | 16M      |
 
+
 ✅ Faster-RCNN
 
 ✅ YOLO-Series
