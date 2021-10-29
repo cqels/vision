@@ -14,19 +14,19 @@ VisionKG is an RDF-based knowledge and built upon the FAIR principles. It provid
 The Overview of VisionKG
 </p>
 
-## Demo for VisionKG:
+## [Demo for VisionKG](https://www.youtube.com/watch?v=Urs3wYtOgzs&t=21s): 
 
-[![Watch the video](https://user-images.githubusercontent.com/87916250/139424066-e073ff49-b667-40fa-9cad-5a3d40a57ae0.png)](https://user-images.githubusercontent.com/87916250/139436043-2b001164-de35-490e-8dc1-c4fa42c7d276.mp4)
+[![Watch the video](https://user-images.githubusercontent.com/87916250/139424066-e073ff49-b667-40fa-9cad-5a3d40a57ae0.png)](https://user-images.githubusercontent.com/87916250/139443459-e7346216-c720-4ad8-bcbd-0f202be4a6c4.mp4)
 
-## UPDATES:
+## Milestones:
 In the future, VisionKG will integrated more and more triples, images, annotations, visual relationships and so on.
 For the pre-trained models, besides the yolo series, now it also supports other one- or two-stage architectures such as EfficientDet, Faster-RCNN, and so on.
 For more details, please check the infomation below.
 
-|             | `Triples` | `Images` | `Annotations` |
-|:-------------:|:-------:|:---------:|:---------:|
-| **08.2021**   | 67M    | 239K      | 1M      |
-| **10.2021** | 140M    | 13M      | 16M      |
+|             | `Triples` | `Images` | `Annotations` |`Tasks` |`Datasets` |
+|:-------------:|:-------:|:---------:|:---------:|:---------:|:---------:|
+| **08.2021**   | 67M    | 239K      | 1M      | Object-Detection <br> Image-Recognition | KITTI <br> MSCOCO <br> ImageNet <br> Visual-Genome |
+| **10.2021** | 140M    | 13M      | 16M      | Visual-Realationship | - |
 
 
 ✅ Faster-RCNN
@@ -81,7 +81,7 @@ VisionKG_meet_MMclassification: [![Open in colab](https://colab.research.google.
 If you use VisionKG in your research, please cite our work.
 
 ```
-@article{Kien2021proceedings,
+@article{Kien:2021,
   title={Fantastic Data and How to Query Them
   author={Trung-Kien, Tran and 
           Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
