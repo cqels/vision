@@ -19,13 +19,24 @@ The Overview of VisionKG
 [![Watch the video](https://user-images.githubusercontent.com/87916250/139424066-e073ff49-b667-40fa-9cad-5a3d40a57ae0.png)](https://user-images.githubusercontent.com/87916250/139423660-d94ab9da-0366-42b9-92ba-918a347283c1.mp4)
 
 ## UPDATES:
-In the future, VisionKG will integrated more and more triples, images, annotations, visual relationships and so on. For more details, please check the below table.
+In the future, VisionKG will integrated more and more triples, images, annotations, visual relationships and so on.
 For the pre-trained models, besides the yolo series, now it also supports other one- or two-stage architectures such as EfficientDet, Faster-RCNN, and so on.
+For more details, please check the infomation below.
 
 |             | `Triples` | `Images` | `Annotations` |
 |:-------------:|:-------:|:---------:|:---------:|
 | **08.2021**   | 67M    | 239K      | 1M      |
 | **10.2021** | 140M    | 13M      | 16M      |
+
+✅ Faster-RCNN
+
+✅ EfficientDet
+
+✅ YOLO-Series
+
+✅ RetinaNet
+
+✅ FCOS
 
 ## Features
 
