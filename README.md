@@ -18,8 +18,14 @@ The Overview of VisionKG
 
 [![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://user-images.githubusercontent.com/87916250/136798334-8f61a296-1494-481a-88b3-edbaf74174a0.mp4)
 
-As of August 2021, VisionKG already consists of 67 million triples, 239 thousand images, and nearly one million annotations. 
+## UPDATES:
+In the future, VisionKG will integrated more and more triples, images, annotations, visual relationships and so on. For more details, please check the below table.
 For the pre-trained models, besides the yolo series, now it also supports other one- or two-stage architectures such as EfficientDet, Faster-RCNN, and so on.
+
+|             | `Triples` | `Images` | `Annotations` |
+|-------------|-------|---------|---------|
+| **08.2021**   | 67M    | 239K      | 1M      |
+| **10.2021** | 140M    | 13M      | 1M      |
 
 ## Features
 
@@ -61,14 +67,12 @@ VisionKG_meet_MMclassification: [![Open in colab](https://colab.research.google.
 If you use VisionKG in your research, please cite our work.
 
 ```
-@inproceedings{Anh:2021,
-  author    = {Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
-               Trung Kien-Tran and
-               Manfred, Hauswirth and Danh, Le-Phuoc
-               },
-  title     = {VisionKG: Towards A Unified Vision Knowledge Graph},
-  booktitle = {Proceedings of the {ISWC} 2021 Posters {\&} Demonstrations Track},
-  series    = {{CEUR} Workshop Proceedings},
-  year      = {2021},
-  }
+@article{Kien2021proceedings,
+  title={Proceedings of NeurIPS 2021 Workshop on Data-Centric AI,
+  author={Trung-Kien, Tran and 
+          Anh, Le-Tuan and Manh, Nguyen-Duc and Jicheng, Yuan and 
+          Danh, Le-Phuoc},
+  series={Workshop Proceedings},
+  year={2021}
+}
 ```
