@@ -16,7 +16,7 @@ The Overview of VisionKG
 
 ## Demo for VisionKG:
 
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://user-images.githubusercontent.com/87916250/136798334-8f61a296-1494-481a-88b3-edbaf74174a0.mp4)
+[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://user-images.githubusercontent.com/87916250/139423660-d94ab9da-0366-42b9-92ba-918a347283c1.mp4)
 
 ## UPDATES:
 In the future, VisionKG will integrated more and more triples, images, annotations, visual relationships and so on. For more details, please check the below table.
