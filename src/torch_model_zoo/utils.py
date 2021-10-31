@@ -282,6 +282,43 @@ def draw_box(coordinates, img_raw, cat_dict):
     plt.show()
 
 
+def show_annotation(annotations_dir, cat_nms, show_num=6, img_dir=None):
+    coco = COCO(annotations_dir)
+    cat_ids = coco.getCatIds(catNms=cat_nms)
+
+    categories = coco.loadCats(cat_ids)
+    cat_dict = {}
+    for category in categories:
+        cat_dict[category['id']] = category['name']
+    imgIds = []
+    for cat_id in cat_ids:
+        imgIds.extend(coco.getImgIds(catIds=cat_id))
+    list(set(imgIds))
+    for i, imgId in enumerate(imgIds):
+        if i == show_num:
+            break
+        img = coco.loadImgs(imgId)[0]
+        dim = (img['width'], img['height'])
+        if img_dir:
+            image_path = os.path.join(img_dir, img['file_name'])
+        else:
+            image_path = img['image_path']
+        annIds = coco.getAnnIds(imgIds=img['id'], catIds=[], iscrowd=None)
+        anns = coco.loadAnns(annIds)
+        coordinates = []
+        if not os.access(image_path, mode=os.R_OK):
+            urllib.request.urlretrieve(img['url'], image_path)
+        img_raw = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
+        img_raw = cv2.resize(img_raw, dim, cv2.INTER_AREA)
+        for j in range(len(anns)):
+            coordinate = anns[j]['bbox']
+            coordinate[2] += coordinate[0]
+            coordinate[3] += coordinate[1]
+            coordinate.append(anns[j]['category_id'])
+            coordinates.append(coordinate)
+        draw_box(coordinates, img_raw, cat_dict)
+
+
 def show_cat_distribution(annotations_dir, cat_nms):
     plt.figure(figsize=(16, 10))
     font_size = 20
@@ -337,8 +374,7 @@ def show_cat_distribution(annotations_dir, cat_nms):
     rotation = 0
     if len(cat_nms) >= 10:
         rotation = 90
-    plt.xticks(len_control + bar_width / 2, [cat_nm.capitalize() for cat_nm in cat_nms], fontsize=font_size,
-               rotation=rotation)
+    plt.xticks(len_control + bar_width / 2, [cat_nm.capitalize() for cat_nm in cat_nms], fontsize=font_size, rotation=rotation)
     plt.legend(fontsize=font_size)
     plt.tight_layout()
     plt.show()
