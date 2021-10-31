@@ -11,12 +11,12 @@ from os.path import join as opj
 import cv2
 from pycocotools.coco import COCO
 from .coco_utils import color_val_matplotlib
+from mpl_toolkits.axes_grid1 import host_subplot
+import errno
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
 
 coloredlogs.install()
-logging.basicConfig(format='[%(asctime)s : %(message)s %(filename)s]',
-                    log_colors='green', loglevel=logging.ERROR)
 
 
 def check_instances_categories(file, annotations, class_names):
@@ -216,14 +216,22 @@ def set_params(path_to_anno_mixedDatasets, num_categories, nms_categories):
     for k, v in params.items():
         print(k, " : ", v)
 
-    print("Params which may need to be reset manually:"
-          "IMGS_PATH: path to your images"
-          "TRAIN_ANNO: path to your training annotations"
-          "TEST_ANNO: path to your test annotations"
-          "NUM_CAT: number of categories your would like to train"
+    print("Params which may need to be reset manually: \n"
+          "IMGS_PATH: path to your images \n"
+          "TRAIN_ANNO: path to your training annotations \n"
+          "TEST_ANNO: path to your test annotations \n"
+          "NUM_CAT: number of categories your would like to train \n"
           "CAT_NMS: name of each category")
 
     return params
+
+
+def mkdir(path):
+    try:
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
 
 
 def draw_box(coordinates, img_raw, cat_dict):
@@ -274,76 +282,98 @@ def draw_box(coordinates, img_raw, cat_dict):
     plt.show()
 
 
-def show_annotation(annotations_dir, cat_nms, show_num=6, img_dir=None):
-    coco = COCO(annotations_dir)
-    cat_ids = coco.getCatIds(catNms=cat_nms)
-
-    categories = coco.loadCats(cat_ids)
-    cat_dict = {}
-    for category in categories:
-        cat_dict[category['id']] = category['name']
-    imgIds = []
-    for cat_id in cat_ids:
-        imgIds.extend(coco.getImgIds(catIds=cat_id))
-    list(set(imgIds))
-    for i, imgId in enumerate(imgIds):
-        if i == show_num:
-            break
-        img = coco.loadImgs(imgId)[0]
-        dim = (img['width'], img['height'])
-        if img_dir:
-            image_path = os.path.join(img_dir, img['file_name'])
-        else:
-            image_path = img['image_path']
-        annIds = coco.getAnnIds(imgIds=img['id'], catIds=[], iscrowd=None)
-        anns = coco.loadAnns(annIds)
-        coordinates = []
-        if not os.access(image_path, mode=os.R_OK):
-            urllib.request.urlretrieve(img['url'], image_path)
-        img_raw = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
-        img_raw = cv2.resize(img_raw, dim, cv2.INTER_AREA)
-        for j in range(len(anns)):
-            coordinate = anns[j]['bbox']
-            coordinate[2] += coordinate[0]
-            coordinate[3] += coordinate[1]
-            coordinate.append(anns[j]['category_id'])
-            coordinates.append(coordinate)
-        draw_box(coordinates, img_raw, cat_dict)
-
-
 def show_cat_distribution(annotations_dir, cat_nms):
-    plt.figure(figsize=(16, 8))
+    plt.figure(figsize=(16, 10))
     font_size = 20
     coco = COCO(annotations_dir)
     cats = coco.loadCats(coco.getCatIds(cat_nms))
     cat_nms = [cat['name'] for cat in cats]
     img_num = []
     bbox_num = []
+    large_instances = []
+    middle_instances = []
+    small_instances = []
+
     for cat_name in cat_nms:
         catId = coco.getCatIds(catNms=cat_name)
-        imgId = coco.getImgIds(catIds=catId)
-        annId = coco.getAnnIds(imgIds=imgId, catIds=catId, iscrowd=None)
-        img_num.append(len(imgId))
-        bbox_num.append(len(annId))
+        imgIds = coco.getImgIds(catIds=catId)
+        annIds = coco.getAnnIds(imgIds=imgIds, catIds=catId, iscrowd=None)
+        num_large = 0
+        num_middle = 0
+        num_small = 0
+        for annId in annIds:
+            area_size = coco.loadAnns(annId)[0]['area']
+            if area_size > 96 * 96:
+                num_large += 1
+            elif area_size < 32 * 32:
+                num_small += 1
+            else:
+                num_middle += 1
+        img_num.append(len(imgIds))
+        bbox_num.append(len(annIds))
+        large_instances.append(num_large)
+        middle_instances.append(num_middle)
+        small_instances.append(num_small)
 
     # set params
     plt.rcParams['font.size'] = font_size
-    plt.rcParams["font.sans-serif"] = ["SimHei"]
     plt.rcParams["axes.unicode_minus"] = False
 
     len_control = np.arange(len(cat_nms))
     bar_width = 0.35
 
     plt.bar(len_control, img_num, bar_width, align="center", color="c", label="num_images", alpha=0.6)
-    plt.bar(len_control + bar_width, bbox_num, bar_width, color="b", align="center", label="num_bbox", alpha=0.6)
+    plt.bar(len_control + bar_width, small_instances, bar_width, color="b", align="center", label="num_small_bbox",
+            alpha=0.6)
+    plt.bar(len_control + bar_width, middle_instances, bar_width, bottom=small_instances, color="m", align="center",
+            label="num_middle_bbox", alpha=0.6)
+    plt.bar(len_control + bar_width, large_instances, bar_width,
+            bottom=np.sum([small_instances, middle_instances], axis=0), color="g", align="center",
+            label="num_large_bbox",
+            alpha=0.6)
 
     plt.xlabel("CATEGORY")
     plt.ylabel("NUMBER")
-
-    plt.xticks(len_control + bar_width / 2, cat_nms, fontsize=font_size)
-    plt.xticks(fontsize=font_size)
+    rotation = 0
+    if len(cat_nms) >= 10:
+        rotation = 90
+    plt.xticks(len_control + bar_width / 2, [cat_nm.capitalize() for cat_nm in cat_nms], fontsize=font_size,
+               rotation=rotation)
     plt.legend(fontsize=font_size)
+    plt.tight_layout()
+    plt.show()
 
+
+def plot_loss_mAP(loss_metrics, mAp):
+    plt.figure(figsize=(16, 8))
+    host = host_subplot(111)
+    plt.subplots_adjust(right=0.8)
+    par1 = host.twinx()
+
+    # set labels
+    host.set_xlabel("Epochs", fontsize=15)
+    host.set_ylabel("Loss", fontsize=15)
+    par1.set_ylabel("mAP (%)", fontsize=15)
+
+    # plot curves
+    for k, v in loss_metrics.items():
+        epoch_loss_mean = []
+        epoch_loss_std = []
+        for epoch_loss in v:
+            epoch_loss_mean.append(np.mean(epoch_loss))
+            epoch_loss_std.append(np.std(epoch_loss))
+        p = host.plot(range(len(epoch_loss_mean)), epoch_loss_mean, label=k)
+        colour = p[-1].get_color()
+        plt.fill_between(range(len(epoch_loss_mean)),
+                         np.array(epoch_loss_mean) - np.array(epoch_loss_std),
+                         np.array(epoch_loss_mean) + np.array(epoch_loss_std),
+                         facecolor=colour, alpha=0.2)
+
+    par1.plot(range(len(mAp)), mAp, label="mAP")
+    host.legend(loc=5, fontsize=15)
+
+    plt.tick_params(labelsize=15)
+    plt.draw()
     plt.show()
 
 

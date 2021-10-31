@@ -20,6 +20,19 @@ def _repeat_to_at_least(iterable, n):
 
 
 class GroupedBatchSampler(BatchSampler):
+    """
+    Wraps another sampler to yield a mini-batch of indices.
+    It enforces that the batch only contain elements from the same group.
+    It also tries to provide mini-batches which follows an ordering which is
+    as close as possible to the ordering from the original sampler.
+    Args:
+        sampler (Sampler): Base sampler.
+        group_ids (list[int]): If the sampler produces indices in range [0, N),
+            `group_ids` must be a list of `N` ints which contains the group id of each sample.
+            The group ids must be a continuous set of integers starting from
+            0, i.e. they must be in the range [0, num_groups).
+        batch_size (int): Size of mini-batch.
+    """
     def __init__(self, sampler, group_ids, batch_size):
         if not isinstance(sampler, Sampler):
             raise ValueError(

@@ -1,17 +1,17 @@
 import datetime
 import os
 import time
-from .presets import DetectionPresetTrain, DetectionPresetEval
+from .coco_utils import DetectionPresetTrain, DetectionPresetEval
 import random
 import math
 import numpy as np
 import torch
-import errno
 import torch.utils.data
 import torchvision
 import torchvision.models.detection
 import torchvision.models.detection.mask_rcnn
-from .coco_utils import get_coco, train_one_epoch, evaluate, showbbox, save_on_master, plot_loss_mAP
+from .coco_utils import get_coco, train_one_epoch, evaluate, save_on_master, inference
+from .utils import plot_loss_mAP, mkdir
 from .group_by_aspect_ratio import GroupedBatchSampler, create_aspect_ratio_groups
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
@@ -23,14 +23,6 @@ def setup_seed(seed):
     np.random.seed(seed)
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
-
-
-def mkdir(path):
-    try:
-        os.makedirs(path)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
 
 
 def get_transform(train, data_augmentation):
@@ -122,7 +114,7 @@ def train_eval_pipeline(params):
         if has_anno:
             evaluate(model_saved, data_loader_test, device=device)
         for img_num, (img, _) in enumerate(dataset_test):
-            showbbox(model_saved, img, img_num, device, threshold=0.7, cat_nms=cat_nms)
+            inference(model_saved, img, img_num, device, threshold=0.7, cat_nms=cat_nms)
         return
     else:
         dataset_train = get_coco(params['IMGS_PATH'], params['TRAIN_ANNO'], get_transform(True, 'hflip'), train=True)
@@ -177,6 +169,6 @@ def train_eval_pipeline(params):
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     for img_num, (img, _) in enumerate(dataset_test):
-        showbbox(model, img, img_num, device, cat_nms=cat_nms)
+        inference(model, img, img_num, device, cat_nms=cat_nms)
     plot_loss_mAP(loss_metrics, mAP)
     print("Training time {}".format(total_time_str))

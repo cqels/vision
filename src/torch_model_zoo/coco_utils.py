@@ -2,15 +2,14 @@ import copy
 import math
 import sys
 import datetime
-import errno
 import os
 import time
+
 import numpy as np
-from pathlib import Path
 import torch
 import torchvision.models.detection.mask_rcnn
-from matplotlib.collections import PatchCollection
-from matplotlib.patches import Polygon
+from matplotlib import pyplot as plt
+
 from . import coco_eval
 import torch.utils.data
 import torchvision
@@ -19,11 +18,11 @@ from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 from collections import defaultdict, deque
 import torch.distributed as dist
-from matplotlib import pyplot as plt
 from torch.optim import Optimizer
 import weakref
 from functools import wraps
-from mpl_toolkits.axes_grid1 import host_subplot
+from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon
 from enum import Enum
 
 
@@ -192,14 +191,6 @@ def collate_fn(batch):
     return tuple(zip(*batch))
 
 
-def mkdir(path):
-    try:
-        os.makedirs(path)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-
-
 def setup_for_distributed(is_master):
     import builtins as __builtin__
 
@@ -265,118 +256,6 @@ def init_distributed_mode(args):
     )
     torch.distributed.barrier()
     setup_for_distributed(args.rank == 0)
-
-
-class Color(Enum):
-    red = (0, 0, 255)
-    green = (0, 255, 0)
-    blue = (255, 0, 0)
-    cyan = (255, 255, 0)
-    yellow = (0, 255, 255)
-    magenta = (255, 0, 255)
-    white = (255, 255, 255)
-    black = (0, 0, 0)
-
-
-def is_str(x):
-    return isinstance(x, str)
-
-
-def color_val(color):
-    if is_str(color):
-        return Color[color].value
-    elif isinstance(color, Color):
-        return color.value
-    elif isinstance(color, tuple):
-        assert len(color) == 3
-        for channel in color:
-            assert 0 <= channel <= 255
-        return color
-    elif isinstance(color, int):
-        assert 0 <= color <= 255
-        return color, color, color
-    elif isinstance(color, np.ndarray):
-        assert color.ndim == 1 and color.size == 3
-        assert np.all((color >= 0) & (color <= 255))
-        color = color.astype(np.uint8)
-        return tuple(color)
-    else:
-        raise TypeError(f'Invalid type for color: {type(color)}')
-
-
-def color_val_matplotlib(color):
-    color = color_val(color)
-    color = [color / 255 for color in color[::-1]]
-    return tuple(color)
-
-
-def showbbox(model, img, img_num, device, threshold=0.5, cat_nms=None):
-    model.eval()
-    with torch.no_grad():
-        prediction = model([img.to(device)])
-    img = img.permute(1, 2, 0)
-    img = (img * 255).byte().data.cpu()
-    img = np.array(img)
-    img = img.astype(np.uint8)
-    img = img.copy()
-
-    win_name = ''
-    fig = plt.figure(win_name, frameon=False)
-    plt.title(win_name)
-
-    canvas = fig.canvas
-    dpi = fig.get_dpi()
-    EPS = 1e-2
-    width, height = img.shape[1], img.shape[0]
-    fig.set_size_inches((width + EPS) / dpi, (height + EPS) / dpi)
-
-    # remove white edges by set subplot margin
-    plt.subplots_adjust(left=0, right=1, bottom=0, top=1)
-    ax = plt.gca()
-    ax.axis('off')
-    polygons = []
-    color = []
-    bbox_color = color_val_matplotlib((72, 101, 241))
-    text_color = color_val_matplotlib((72, 101, 241))
-    thickness = 2
-
-    for i in range(prediction[0]['boxes'].cpu().shape[0]):
-        score = prediction[0]['scores'][i].item()
-        if score > threshold:
-            xmin = round((prediction[0]['boxes'][i][0].item()))
-            ymin = round((prediction[0]['boxes'][i][1].item()))
-            xmax = round((prediction[0]['boxes'][i][2].item()))
-            ymax = round((prediction[0]['boxes'][i][3].item()))
-            poly = [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
-            np_poly = np.array(poly).reshape((4, 2))
-            polygons.append(Polygon(np_poly))
-            color.append(bbox_color)
-            label = prediction[0]['labels'][i].item()
-            label_text = cat_nms[label - 1] if cat_nms is not None else f'class {label}'
-            label_text += f'|{score:.02f}'
-            ax.text(
-                xmin,
-                ymin,
-                f'{str(label_text)}',
-                bbox={
-                    'facecolor': 'black',
-                    'alpha': 0.8,
-                    'pad': 0.7,
-                    'edgecolor': 'none'
-                },
-                color=text_color,
-                fontsize=13,
-                verticalalignment='top',
-                horizontalalignment='left')
-    plt.imshow(img)
-    p = PatchCollection(
-        polygons, facecolor='none', edgecolors=color, linewidths=thickness)
-    ax.add_collection(p)
-    retult_path = './results/'
-    if not Path(retult_path).is_dir():
-        os.makedirs(retult_path)
-    plt.savefig(os.path.join(retult_path, '{}.png'.format(img_num)), bbox_inches='tight')
-    plt.show()
 
 
 class _LRScheduler(object):
@@ -781,34 +660,153 @@ def evaluate(model, data_loader, device):
     return coco_evaluator, mAP_rcall_stats
 
 
-def plot_loss_mAP(loss_metrics, mAp):
-    plt.figure(figsize=(16, 8))
-    host = host_subplot(111)
-    plt.subplots_adjust(right=0.8)
-    par1 = host.twinx()
+class Color(Enum):
+    red = (0, 0, 255)
+    green = (0, 255, 0)
+    blue = (255, 0, 0)
+    cyan = (255, 255, 0)
+    yellow = (0, 255, 255)
+    magenta = (255, 0, 255)
+    white = (255, 255, 255)
+    black = (0, 0, 0)
 
-    # set labels
-    host.set_xlabel("Epochs", fontsize=15)
-    host.set_ylabel("Loss", fontsize=15)
-    par1.set_ylabel("mAP (%)", fontsize=15)
 
-    # plot curves
-    for k, v in loss_metrics.items():
-        epoch_loss_mean = []
-        epoch_loss_std = []
-        for epoch_loss in v:
-            epoch_loss_mean.append(np.mean(epoch_loss))
-            epoch_loss_std.append(np.std(epoch_loss))
-        p = host.plot(range(len(epoch_loss_mean)), epoch_loss_mean, label=k)
-        colour = p[-1].get_color()
-        plt.fill_between(range(len(epoch_loss_mean)),
-                         np.array(epoch_loss_mean) - np.array(epoch_loss_std),
-                         np.array(epoch_loss_mean) + np.array(epoch_loss_std),
-                         facecolor=colour, alpha=0.2)
+def is_str(x):
+    return isinstance(x, str)
 
-    par1.plot(range(len(mAp)), mAp, label="mAP")
-    host.legend(loc=5, fontsize=15)
 
-    plt.tick_params(labelsize=15)
-    plt.draw()
+def color_val(color):
+    if is_str(color):
+        return Color[color].value
+    elif isinstance(color, Color):
+        return color.value
+    elif isinstance(color, tuple):
+        assert len(color) == 3
+        for channel in color:
+            assert 0 <= channel <= 255
+        return color
+    elif isinstance(color, int):
+        assert 0 <= color <= 255
+        return color, color, color
+    elif isinstance(color, np.ndarray):
+        assert color.ndim == 1 and color.size == 3
+        assert np.all((color >= 0) & (color <= 255))
+        color = color.astype(np.uint8)
+        return tuple(color)
+    else:
+        raise TypeError(f'Invalid type for color: {type(color)}')
+
+
+def color_val_matplotlib(color):
+    color = color_val(color)
+    color = [color / 255 for color in color[::-1]]
+    return tuple(color)
+
+
+def inference(model, img, img_num, device, threshold=0.5, cat_nms=None):
+    model.eval()
+    with torch.no_grad():
+        prediction = model([img.to(device)])
+    img = img.permute(1, 2, 0)
+    img = (img * 255).byte().data.cpu()
+    img = np.array(img)
+    img = img.astype(np.uint8)
+    img = img.copy()
+
+    win_name = ''
+    fig = plt.figure(win_name, frameon=False)
+    plt.title(win_name)
+
+    dpi = fig.get_dpi()
+    EPS = 1e-2
+    width, height = img.shape[1], img.shape[0]
+    fig.set_size_inches((width + EPS) / dpi, (height + EPS) / dpi)
+
+    # remove white edges by set subplot margin
+    plt.subplots_adjust(left=0, right=1, bottom=0, top=1)
+    ax = plt.gca()
+    ax.axis('off')
+    polygons = []
+    color = []
+    bbox_color = color_val_matplotlib((72, 101, 241))
+    text_color = color_val_matplotlib((72, 101, 241))
+    thickness = 2
+
+    for i in range(prediction[0]['boxes'].cpu().shape[0]):
+        score = prediction[0]['scores'][i].item()
+        if score > threshold:
+            xmin = round((prediction[0]['boxes'][i][0].item()))
+            ymin = round((prediction[0]['boxes'][i][1].item()))
+            xmax = round((prediction[0]['boxes'][i][2].item()))
+            ymax = round((prediction[0]['boxes'][i][3].item()))
+            poly = [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
+            np_poly = np.array(poly).reshape((4, 2))
+            polygons.append(Polygon(np_poly))
+            color.append(bbox_color)
+            label = prediction[0]['labels'][i].item()
+            label_text = cat_nms[label - 1] if cat_nms is not None else f'class {label}'
+            label_text += f'|{score:.02f}'
+            ax.text(
+                xmin,
+                ymin,
+                f'{str(label_text)}',
+                bbox={
+                    'facecolor': 'black',
+                    'alpha': 0.8,
+                    'pad': 0.7,
+                    'edgecolor': 'none'
+                },
+                color=text_color,
+                fontsize=13,
+                verticalalignment='top',
+                horizontalalignment='left')
+    plt.imshow(img)
+    p = PatchCollection(
+        polygons, facecolor='none', edgecolors=color, linewidths=thickness)
+    ax.add_collection(p)
     plt.show()
+
+
+class DetectionPresetTrain:
+    def __init__(self, data_augmentation, hflip_prob=0.5, mean=(123.0, 117.0, 104.0)):
+        if data_augmentation == "hflip":
+            self.transforms = T.Compose(
+                [
+                    T.RandomHorizontalFlip(p=hflip_prob),
+                    T.ToTensor(),
+                    T.ConvertImageDtype(torch.float),
+                ]
+            )
+        elif data_augmentation == "ssd":
+            self.transforms = T.Compose(
+                [
+                    T.RandomPhotometricDistort(),
+                    T.RandomZoomOut(fill=list(mean)),
+                    T.RandomIoUCrop(),
+                    T.RandomHorizontalFlip(p=hflip_prob),
+                    T.ToTensor(),
+                    T.ConvertImageDtype(torch.float),
+                ]
+            )
+        elif data_augmentation == "ssdlite":
+            self.transforms = T.Compose(
+                [
+                    T.RandomIoUCrop(),
+                    T.RandomHorizontalFlip(p=hflip_prob),
+                    T.ToTensor(),
+                    T.ConvertImageDtype(torch.float),
+                ]
+            )
+        else:
+            raise ValueError(f'Unknown data augmentation policy "{data_augmentation}"')
+
+    def __call__(self, img, target):
+        return self.transforms(img, target)
+
+
+class DetectionPresetEval:
+    def __init__(self):
+        self.transforms = T.ToTensor()
+
+    def __call__(self, img, target):
+        return self.transforms(img, target)
