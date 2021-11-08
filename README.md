@@ -51,22 +51,22 @@ For more details, please check the infomation below.
 
 [Explore more about VisionKG →](https://vision.semkg.org/)
 
-## Quick-View
+## Quick-View ![Open in colab](https://colab.research.google.com/assets/colab-badge.svg)
 
 VisionKG can also be integrated into many famous toolboxes. 
 For that, we also provides three pipelines for image recognition and obejct detection based on VisionKG and other toolboxes.
 
 ### Object Detection:
 
-VisionKG_meet_MMdetection: [![Open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_mmdetection.ipynb)
+[VisionKG_meet_MMdetection →](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_mmdetection.ipynb)
 
-VisionKG_meet_Pytorch_model_Zoo: [![Open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_pytorch_build_in_models_.ipynb)
+[VisionKG_meet_Pytorch_model_Zoo →](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_pytorch_build_in_models_.ipynb)
 
 ### Image Recognition:
 
-VisionKG_meet_timm: [![Open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_classification_timm.ipynb)
+[VisionKG_meet_timm →](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_classification_timm.ipynb)
 
-VisionKG_meet_MMclassification: [![Open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_classification_mmclassification.ipynb)
+[VisionKG_meet_MMclassification →](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_classification_mmclassification.ipynb)
 
 ## Acknowledgements
 
