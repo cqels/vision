@@ -1,0 +1,20 @@
+{
+  "images": [
+    {
+      "label": "person",
+      "file_name": "000000179034.jpg",
+      "image_path": "/data/image_dataset/person/000000179034.jpg",
+      "url": "http://farm4.staticflickr.com/3196/2465940355_a3bbba6b5f_z.jpg",
+      "width": 640,
+      "height": 454
+    },
+    {
+      "label": "cat",
+      "file_name": "000000031090.jpg",
+      "image_path": "/data/image_dataset/cat/000000031090.jpg",
+      "url": "http://farm1.staticflickr.com/140/373453731_4c26c43c20_z.jpg",
+      "width": 640,
+      "height": 480
+    }
+  ]
+}

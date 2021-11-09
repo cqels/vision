@@ -1,0 +1,14 @@
+{
+  "person": [
+    "http://images.cocodataset.org/train2017/000000196610.jpg",
+    "http://images.cocodataset.org/train2017/000000360452.jpg",
+    "http://images.cocodataset.org/train2017/000000032773.jpg",
+    "http://images.cocodataset.org/train2017/000000294918.jpg",
+    "http://images.cocodataset.org/train2017/000000262148.jpg"
+  ],
+  "cat": [
+    "http://images.cocodataset.org/train2017/000000229415.jpg",
+    "http://images.cocodataset.org/train2017/000000229391.jpg",
+    "http://images.cocodataset.org/train2017/000000458772.jpg"
+  ]
+}

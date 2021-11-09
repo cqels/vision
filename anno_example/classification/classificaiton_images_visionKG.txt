@@ -1,0 +1,22 @@
+query_string='''# query 100 images for person from CIFAR100 and 100 images for cat from ImageNet
+prefix cv:<http://vision.semkg.org/onto/v0.1/>
+SELECT ?image
+{
+    {
+        SELECT DISTINCT ?image{
+            cvds:CIFAR100 cv:containsImage ?image .
+            ?image cv:hasLocalPath ?localPath .
+            ?image cv:hasAnnotation ?ann .
+            ?ann cv:hasLabel "person" .
+        }
+        LIMIT 100
+    } UNION {
+        SELECT DISTINCT ?image {
+            cvds:ImageNet cv:containsImage ?image .
+            ?image cv:hasLocalPath ?localPath .
+            ?image cv:hasAnnotation ?ann .
+            ?ann cv:hasLabel "cat" .
+        }
+        LIMIT 100
+    }
+}
