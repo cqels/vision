@@ -182,7 +182,7 @@ def anno_filter(anno_path, filter_cat_nms):
     coco = COCO(anno_path)
     cat_ids = coco.getCatIds(catNms=filter_cat_nms)
     categoreis_info = coco.loadCats(cat_ids)
-    cat_nms = [cat_name for cat_name in categoreis_info['name']]
+    cat_nms = [cat_name['name'] for cat_name in categoreis_info]
     for filter_cat_name in filter_cat_nms:
         if filter_cat_name not in cat_nms:
             filter_cat_nms.remove(filter_cat_name)
