@@ -115,7 +115,7 @@ data = dict(
         img_prefix='/data/image_dataset/coco/',
         pipeline=test_pipeline,
         classes=classes))
-evaluation = dict(interval=1, metric='bbox',save_best='bbox_mAP',classwise=True)
+evaluation = dict(interval=1, metric='bbox',save_best='bbox_mAP')
 # optimizer
 optimizer = dict(
     lr=0.005, paramwise_cfg=dict(bias_lr_mult=2., bias_decay_mult=0.))
