@@ -178,12 +178,45 @@ def checkpoint_verify(work_dir, ckpt_file=None):
     return os.path.abspath(ckpt_file)
 
 
-def prepare_for_training(path_to_anno_mixedDatasets, anno):
+def anno_filter(anno_path, filter_cat_nms):
+    coco = COCO(anno_path)
+    cat_ids = coco.getCatIds(catNms=filter_cat_nms)
+    categoreis_info = coco.loadCats(cat_ids)
+    cat_nms = [cat_name for cat_name in categoreis_info['name']]
+    for filter_cat_name in filter_cat_nms:
+        if filter_cat_name not in cat_nms:
+            filter_cat_nms.remove(filter_cat_name)
+    if filter_cat_nms:
+        return filter_cat_nms
+    img_ids = []
+    for idx in cat_ids:
+        img_ids += coco.getImgIds(catIds=idx)
+    images_info = coco.loadImgs(list(set(img_ids)))
+    ann_ids = list(set(coco.getAnnIds(imgIds=img_ids, catIds=cat_ids, iscrowd=None)))
+    annotations_info = coco.loadAnns(ann_ids)
+    cls_ids, coco_labels_inverse = [], {}
+    for c in categoreis_info:
+        new_cat_idx = len(cls_ids) + 1
+        coco_labels_inverse[c['id']] = new_cat_idx
+        cls_ids.append(new_cat_idx)
+        c['id'] = new_cat_idx
+
+    for anno in annotations_info:
+        anno['category_id'] = coco_labels_inverse[anno['category_id']]
+
+    filter_annos = {"images": images_info,
+                    "annotations": annotations_info,
+                    "categories": categoreis_info}
+    return filter_annos
+
+
+def prepare_for_training(path_to_anno_mixedDatasets, anno, filter_cat_nms=None):
     os.makedirs(os.path.abspath(os.path.join(path_to_anno_mixedDatasets, "..")), exist_ok=True)
     with open(path_to_anno_mixedDatasets, "w") as f:
         json.dump(anno, f)
+    if filter_cat_nms:
+        anno = anno_filter(path_to_anno_mixedDatasets, filter_cat_nms)
     check_download_images(anno["images"])
-
     nms_categories = [category['name'] for category in anno['categories']]
     num_categories = len(nms_categories)
 
@@ -374,7 +407,8 @@ def show_cat_distribution(annotations_dir, cat_nms):
     rotation = 0
     if len(cat_nms) >= 10:
         rotation = 90
-    plt.xticks(len_control + bar_width / 2, [cat_nm.capitalize() for cat_nm in cat_nms], fontsize=font_size, rotation=rotation)
+    plt.xticks(len_control + bar_width / 2, [cat_nm.capitalize() for cat_nm in cat_nms], fontsize=font_size,
+               rotation=rotation)
     plt.legend(fontsize=font_size)
     plt.tight_layout()
     plt.show()
@@ -432,13 +466,3 @@ def image_from_google_drive(img_info):
     """
 
     pass
-
-
-def label_filter(cat_nms):
-    """
-    remove the categories which are not need any more.
-    Args:
-        cat_nms: categoreis names which need to be saved, format ['car', 'truck']
-    Returns:
-
-    """
