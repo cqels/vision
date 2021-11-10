@@ -178,6 +178,11 @@ def checkpoint_verify(work_dir, ckpt_file=None):
     return os.path.abspath(ckpt_file)
 
 
+def save_anno(annotations, file_path):
+    with open(file_path, "w") as f:
+        json.dump(annotations, f, indent=2)
+
+
 def anno_filter(anno_path, filter_cat_nms):
     coco = COCO(anno_path)
     cat_ids = coco.getCatIds(catNms=filter_cat_nms)
@@ -212,12 +217,12 @@ def anno_filter(anno_path, filter_cat_nms):
 
 def prepare_for_training(path_to_anno_mixedDatasets, anno, filter_cat_nms=None):
     os.makedirs(os.path.abspath(os.path.join(path_to_anno_mixedDatasets, "..")), exist_ok=True)
-    with open(path_to_anno_mixedDatasets, "w") as f:
-        json.dump(anno, f)
+    save_anno(anno, path_to_anno_mixedDatasets)
     if filter_cat_nms:
         filter_result = anno_filter(path_to_anno_mixedDatasets, filter_cat_nms)
-        if not filter_result:
+        if filter_result:
             anno = filter_result
+            save_anno(anno, path_to_anno_mixedDatasets)
     check_download_images(anno["images"])
     nms_categories = [category['name'] for category in anno['categories']]
     num_categories = len(nms_categories)
