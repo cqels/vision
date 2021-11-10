@@ -403,7 +403,7 @@ def show_cat_distribution(annotations_dir, cat_nms):
     plt.bar(len_control + bar_width, small_instances, bar_width, color="b", align="center", label="num_small_bbox",
             alpha=0.6)
     plt.bar(len_control + bar_width, middle_instances, bar_width, bottom=small_instances, color="m", align="center",
-            label="num_middle_bbox", alpha=0.6)
+            label="num_mid_bbox", alpha=0.6)
     plt.bar(len_control + bar_width, large_instances, bar_width,
             bottom=np.sum([small_instances, middle_instances], axis=0), color="g", align="center",
             label="num_large_bbox",
@@ -416,7 +416,7 @@ def show_cat_distribution(annotations_dir, cat_nms):
         rotation = 90
     plt.xticks(len_control + bar_width / 2, [cat_nm.capitalize() for cat_nm in cat_nms], fontsize=font_size,
                rotation=rotation)
-    plt.legend(fontsize=font_size, loc = 'upper center')
+    plt.legend(fontsize=15, loc = 'upper left')
     plt.tight_layout()
     plt.show()
 
