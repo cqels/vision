@@ -215,7 +215,9 @@ def prepare_for_training(path_to_anno_mixedDatasets, anno, filter_cat_nms=None):
     with open(path_to_anno_mixedDatasets, "w") as f:
         json.dump(anno, f)
     if filter_cat_nms:
-        anno = anno_filter(path_to_anno_mixedDatasets, filter_cat_nms)
+        filter_result = anno_filter(path_to_anno_mixedDatasets, filter_cat_nms)
+        if not filter_result:
+            anno = filter_result
     check_download_images(anno["images"])
     nms_categories = [category['name'] for category in anno['categories']]
     num_categories = len(nms_categories)
