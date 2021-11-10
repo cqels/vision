@@ -416,7 +416,7 @@ def show_cat_distribution(annotations_dir, cat_nms):
         rotation = 90
     plt.xticks(len_control + bar_width / 2, [cat_nm.capitalize() for cat_nm in cat_nms], fontsize=font_size,
                rotation=rotation)
-    plt.legend(fontsize=font_size, loc = 'best')
+    plt.legend(fontsize=font_size, loc = 'uppber center')
     plt.tight_layout()
     plt.show()
 
