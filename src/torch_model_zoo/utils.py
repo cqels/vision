@@ -186,7 +186,7 @@ def anno_filter(anno_path, filter_cat_nms):
     for filter_cat_name in filter_cat_nms:
         if filter_cat_name not in cat_nms:
             filter_cat_nms.remove(filter_cat_name)
-    if filter_cat_nms:
+    if not filter_cat_nms:
         return filter_cat_nms
     img_ids = []
     for idx in cat_ids:
