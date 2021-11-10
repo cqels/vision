@@ -115,7 +115,7 @@ data = dict(
         img_prefix='/data/image_dataset/coco/',
         pipeline=test_pipeline,
         classes=classes))
-evaluation = dict(interval=1, metric='bbox',save_best='bbox_mAP')
+evaluation = dict(interval=2, metric='bbox',save_best='bbox_mAP')
 # optimizer
 optimizer = dict(
     lr=0.005, paramwise_cfg=dict(bias_lr_mult=2., bias_decay_mult=0.))
@@ -128,14 +128,14 @@ lr_config = dict(
     warmup_iters=500,
     warmup_ratio=1.0 / 3,
     step=[8, 11])
-checkpoint_config = dict(interval=1)
+checkpoint_config = dict(interval=2)
 log_config = dict(
     interval=50,
     hooks=[
         dict(type='TextLoggerHook'),
         dict(type='TensorboardLoggerHook')
     ])
-runner = dict(type='EpochBasedRunner', max_epochs=10)
+runner = dict(type='EpochBasedRunner', max_epochs=6)
 # device_ids = range(2)
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
@@ -143,4 +143,4 @@ work_dir = './mixedDatasets/logs_visionKG/'
 load_from = 'https://openmmlab.oss-cn-hangzhou.aliyuncs.com/mmdetection/v2.0/fcos/fcos_r50_caffe_fpn_gn-head_1x_coco/fcos_r50_caffe_fpn_gn-head_1x_coco-821213aa.pth'
 out='./mixedDatasets/logs_visionKG/result_test.pkl'
 resume_from = None
-workflow = [('train', 1),('val', 1)]
+workflow = [('train', 2),('val', 1)]

@@ -236,7 +236,7 @@ def set_params(path_to_anno_mixedDatasets, num_categories, nms_categories):
     seed = 65375
     batch_size = 4
     start_epoch = 0
-    total_epochs = 13
+    total_epochs = 6
     eval_only = False
     output_dir = 'save_model'
     model = 'retinanet_resnet50_fpn'
