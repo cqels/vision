@@ -3,6 +3,7 @@
 ## Tutorial Detection:
 
 Open in Google Colab: [mmdetection](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_mmdetection.ipynb)
+                      [VisionKG_meet_MMdetection →](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_mmdetection.ipynb)
 
 Open in Google Colab: [torch_model_zoo](https://colab.research.google.com/github/cqels/vision/blob/main/tutorials/tutorials_detection_pytorch_build_in_models.ipynb)
 
