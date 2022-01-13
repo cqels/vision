@@ -25,8 +25,8 @@ For more details, please check the infomation below.
 
 |             | `Triples` | `Images` | `Annotations` |`Tasks` |`Datasets` |
 |:-------------:|:-------:|:---------:|:---------:|:---------:|:---------:|
-| **08.2021**   | 67M    | 239K      | 1M      | Object-Detection | KITTI <br> MSCOCO <br> Visual-Genome |
-| **10.2021** | 140M    | 13M      | 16M      | Visual-Relationship <br> Image-Recognition | ImageNet |
+| **08.2021**   | 67M    | 239K      | 1M      | Object-Detection <br> Visual-Relationship | KITTI <br> MSCOCO <br> Visual-Genome |
+| **10.2021** | 140M    | 13M      | 16M      | Image-Recognition | ImageNet |
 
 
 ✅ Faster-RCNN
