@@ -1,120 +1,80 @@
-_base_ = [
-    '../_base_/datasets/coco_detection.py',
-    '../_base_/schedules/schedule_1x.py', '../_base_/default_runtime.py'
+_base_ = ['fcos_r50-caffe_fpn_gn-head_1x_coco.py'
 ]
 
 
 # model settings
 model = dict(
-    type='FCOS',
+    data_preprocessor=dict(
+        type='DetDataPreprocessor',
+        mean=[103.530, 116.280, 123.675],
+        std=[1.0, 1.0, 1.0],
+        bgr_to_rgb=False,
+        pad_size_divisor=32),
     backbone=dict(
-        type='ResNet',
-        depth=50,
-        num_stages=4,
-        out_indices=(0, 1, 2, 3),
-        frozen_stages=1,
-        norm_cfg=dict(type='BN', requires_grad=False),
-        norm_eval=True,
-        style='caffe',
+        dcn=dict(type='DCNv2', deform_groups=1, fallback_on_stride=False),
+        stage_with_dcn=(False, True, True, True),
         init_cfg=dict(
             type='Pretrained',
-            checkpoint='open-mmlab://detectron/resnet50_caffe')),
-    neck=dict(
-        type='FPN',
-        in_channels=[256, 512, 1024, 2048],
-        out_channels=256,
-        start_level=1,
-        add_extra_convs='on_output',  # use P5
-        num_outs=5,
-        relu_before_extra_convs=True),
+            checkpoint='open-mmlab://detectron2/resnet50_caffe')),
     bbox_head=dict(
-        type='FCOSHead',
-        num_classes=80,
-        in_channels=256,
-        stacked_convs=4,
-        feat_channels=256,
-        strides=[8, 16, 32, 64, 128],
-        loss_cls=dict(
-            type='FocalLoss',
-            use_sigmoid=True,
-            gamma=2.0,
-            alpha=0.25,
-            loss_weight=1.0),
-        loss_bbox=dict(type='IoULoss', loss_weight=1.0),
-        loss_centerness=dict(
-            type='CrossEntropyLoss', use_sigmoid=True, loss_weight=1.0)),
+        norm_on_bbox=True,
+        centerness_on_reg=True,
+        dcn_on_last_conv=True,
+        center_sampling=True,
+        conv_bias=True,
+        loss_bbox=dict(type='GIoULoss', loss_weight=1.0)),
     # training and testing settings
-    train_cfg=dict(
-        assigner=dict(
-            type='MaxIoUAssigner',
-            pos_iou_thr=0.5,
-            neg_iou_thr=0.4,
-            min_pos_iou=0,
-            ignore_iof_thr=-1),
-        allowed_border=-1,
-        pos_weight=-1,
-        debug=False),
-    test_cfg=dict(
-        nms_pre=1000,
-        min_bbox_size=0,
-        score_thr=0.05,
-        nms=dict(type='nms', iou_threshold=0.5),
-        max_per_img=100))
-
+    test_cfg=dict(nms=dict(type='nms', iou_threshold=0.6)))
+    
 img_norm_cfg = dict(
     mean=[102.9801, 115.9465, 122.7717], std=[1.0, 1.0, 1.0], to_rgb=False)
-train_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
-    dict(type='RandomFlip', flip_ratio=0.5),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='Pad', size_divisor=32),
-    dict(type='DefaultFormatBundle'),
-    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
-]
 
-test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(
-        type='MultiScaleFlipAug',
-        img_scale=(1333, 800),
-        flip=False,
-        transforms=[
-            dict(type='Resize', keep_ratio=True),
-            dict(type='RandomFlip'),
-            dict(type='Normalize', **img_norm_cfg),
-            dict(type='Pad', size_divisor=32),
-            dict(type='ImageToTensor', keys=['img']),
-            dict(type='Collect', keys=['img']),
-        ])
-]
+backend_args = None
 
 dataset_type = 'CocoDataset'
-data_root = 'data/mixedDatasets/'
+data_root = 'data/'
 classes = ('None',)
-data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=2,
-    train=dict(
-        type=dataset_type,
-        ann_file=data_root + 'train.json',
-        img_prefix='/data/image_dataset/coco/',
-        pipeline=train_pipeline,
-        classes=classes),
 
-    val=dict(
+train_dataloader = dict(
+    batch_size=2,
+    num_workers=2,
+    persistent_workers=True,
+    sampler=dict(type='DefaultSampler', shuffle=True),
+    batch_sampler=dict(type='AspectRatioBatchSampler'),
+    dataset=dict(
         type=dataset_type,
-        ann_file=data_root + 'val.json',
-        img_prefix='/data/image_dataset/coco/',
-        pipeline=test_pipeline,
-        classes=classes),
-    test=dict(
+        data_root=data_root,
+        ann_file='mixedDatasets/train.json',
+        data_prefix=dict(img='image_dataset/coco2017_det_val/'),
+        filter_cfg=dict(filter_empty_gt=True, min_size=32),
+        pipeline=train_pipeline,
+        metainfo=dict(classes=classes),
+        backend_args=backend_args))
+val_dataloader = dict(
+    batch_size=1,
+    num_workers=2,
+    persistent_workers=True,
+    drop_last=False,
+    sampler=dict(type='DefaultSampler', shuffle=False),
+    dataset=dict(
         type=dataset_type,
-        ann_file=data_root + 'test.json',
-        img_prefix='/data/image_dataset/coco/',
+        data_root=data_root,
+        ann_file='mixedDatasets/val.json',
+        data_prefix=dict(img='image_dataset/coco2017_det_val/'),
+        test_mode=True,
         pipeline=test_pipeline,
-        classes=classes))
+        metainfo=dict(classes=classes),
+        backend_args=backend_args))
+test_dataloader = val_dataloader
+
+val_evaluator = dict(
+    type='CocoMetric',
+    ann_file=data_root + 'mixedDatasets/val.json',
+    metric='bbox',
+    format_only=False,
+    backend_args=backend_args)
+test_evaluator = val_evaluator
+
 evaluation = dict(interval=2, metric='bbox',save_best='bbox_mAP')
 # optimizer
 optimizer = dict(
@@ -135,12 +95,21 @@ log_config = dict(
         dict(type='TextLoggerHook'),
         dict(type='TensorboardLoggerHook')
     ])
-runner = dict(type='EpochBasedRunner', max_epochs=6)
+
+# learning policy
+max_epochs = 12
+train_cfg = dict(
+    type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=1)
+
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+
+auto_scale_lr = dict(base_batch_size=16)
 # device_ids = range(2)
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 work_dir = './mixedDatasets/logs_visionKG/'
-load_from = 'https://openmmlab.oss-cn-hangzhou.aliyuncs.com/mmdetection/v2.0/fcos/fcos_r50_caffe_fpn_gn-head_1x_coco/fcos_r50_caffe_fpn_gn-head_1x_coco-821213aa.pth'
+load_from = 'https://download.openmmlab.com/mmdetection/v2.0/fcos/fcos_center-normbbox-centeronreg-giou_r50_caffe_fpn_gn-head_dcn_1x_coco/fcos_center-normbbox-centeronreg-giou_r50_caffe_fpn_gn-head_dcn_1x_coco-ae4d8b3d.pth'
 out='./mixedDatasets/logs_visionKG/result_test.pkl'
 resume_from = None
 workflow = [('train', 2),('val', 1)]

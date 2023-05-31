@@ -476,7 +476,7 @@ def visionkg2cocoDet(query_bindings: List[Dict]) -> Dict:
                     'height': image_height,
                     'width': image_width,
                     'url': anno['imageUrl'],
-                    'image_path': os.path.join('data', 'image_dataset', anno['datasetName'], anno['imageName']),
+                    'image_path': os.path.join('data', 'image_dataset', 'coco', anno['imageName']),
                }
                coco_images_info.append(coco_image_info)
                
