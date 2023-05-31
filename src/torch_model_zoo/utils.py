@@ -15,7 +15,7 @@ from mpl_toolkits.axes_grid1 import host_subplot
 import errno
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
-
+from typing import List, Dict
 coloredlogs.install()
 
 
@@ -453,6 +453,71 @@ def plot_loss_mAP(loss_metrics, mAp):
     plt.draw()
     plt.show()
 
+def visionkg2cocoDet(query_bindings: List[Dict]) -> Dict:
+     
+     coco_annotations = []
+     coco_images_info = []
+     coco_categories = []
+     
+     anno_categories2id = {}
+     image_nm2id = {}
+     
+     for idx,anno in enumerate(query_bindings):
+          
+          image_height = int(anno['imageHeight'])
+          image_width = int(anno['imageWidth'])
+          
+          if anno['imageName'] not in image_nm2id.keys():
+               image_nm2id[anno['imageName']] = len(image_nm2id) + 1
+               coco_image_info = {
+                    'id': image_nm2id[anno['imageName']],
+                    'file_name': anno['imageName'],
+                    'dataset': anno['datasetName'],
+                    'height': image_height,
+                    'weight': image_width,
+                    'url': anno['imageUrl'],
+                    'image_path': os.path.join('data', 'image_dataset', anno['datasetName'], anno['imageName']),
+               }
+               coco_images_info.append(coco_image_info)
+               
+          if anno['labelName'] not in anno_categories2id.keys():
+               anno_categories2id[anno['labelName']] = len(anno_categories2id) + 1
+               
+          box_center_x = round(float(anno['bbCentreX']), 2)
+          box_center_y = round(float(anno['bbCentreY']), 2)
+          box_height = round(float(anno['bbHeight']), 2)
+          box_width = round(float(anno['bbWidth']), 2)
+          
+          x_ = round(box_center_x - box_width / 2, 2)
+          y_ = round(box_center_y - box_height / 2, 2)
+          
+          # make sure the box is in the image
+          x = 0 if x_ < 0 else x_
+          y = 0 if y_ < 0 else y_
+          
+          assert x + box_width <= image_width 
+          assert y + box_height <= image_height
+          
+          coco_annotation = {
+               'id': idx + 1,
+               'image_id': image_nm2id[anno['imageName']],
+               'bbox': [x, y, box_width, box_height],
+               'category_id': anno_categories2id[anno['labelName']],
+               'iscrowd': 0,
+               'area': round(box_height * box_width),
+          }
+          coco_annotations.append(coco_annotation)
+          
+     coco_categories = [{'id': v, 'name': k, 'supercategory':None} for k, v in anno_categories2id.items()]
+     
+     coco_format_annotations = {
+          'images': coco_images_info,
+          'annotations': coco_annotations,
+          'categories': coco_categories,
+     }
+     
+     return coco_format_annotations
+     
 
 def images_categories_distribution(path_to_anno):
     """
