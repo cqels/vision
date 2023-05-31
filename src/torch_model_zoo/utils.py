@@ -488,20 +488,20 @@ def visionkg2cocoDet(query_bindings: List[Dict]) -> Dict:
           box_height = round(float(anno['bbHeight']), 2)
           box_width = round(float(anno['bbWidth']), 2)
           
-          x_ = round(box_center_x - box_width / 2, 2)
-          y_ = round(box_center_y - box_height / 2, 2)
+        #   x_ = round(box_center_x - box_width / 2, 2)
+        #   y_ = round(box_center_y - box_height / 2, 2)
           
           # make sure the box is in the image
-          x = 0 if x_ < 0 else x_
-          y = 0 if y_ < 0 else y_
+        #   x = 0 if x_ < 0 else x_
+        #   y = 0 if y_ < 0 else y_
           
-          assert x + box_width <= image_width 
-          assert y + box_height <= image_height
+          assert box_center_x + box_width <= image_width 
+          assert box_center_y + box_height <= image_height
           
           coco_annotation = {
                'id': idx + 1,
                'image_id': image_nm2id[anno['imageName']],
-               'bbox': [x, y, box_width, box_height],
+               'bbox': [box_center_x, box_center_y, box_width, box_height],
                'category_id': anno_categories2id[anno['labelName']],
                'iscrowd': 0,
                'area': round(box_height * box_width),

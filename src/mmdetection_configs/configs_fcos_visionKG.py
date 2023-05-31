@@ -63,7 +63,7 @@ train_dataloader = dict(
         type=dataset_type,
         data_root=data_root,
         ann_file='mixedDatasets/train.json',
-        data_prefix=dict(img='image_dataset/coco2017_det_val/'),
+        data_prefix=dict(img='image_dataset/coco/'),
         filter_cfg=dict(filter_empty_gt=True, min_size=32),
         pipeline=train_pipeline,
         metainfo=dict(classes=classes),
@@ -78,7 +78,7 @@ val_dataloader = dict(
         type=dataset_type,
         data_root=data_root,
         ann_file='mixedDatasets/val.json',
-        data_prefix=dict(img='image_dataset/coco2017_det_val/'),
+        data_prefix=dict(img='image_dataset/coco/'),
         test_mode=True,
         pipeline=test_pipeline,
         metainfo=dict(classes=classes),
@@ -99,13 +99,6 @@ optimizer = dict(
     lr=0.005, paramwise_cfg=dict(bias_lr_mult=2., bias_decay_mult=0.))
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
-# learning policy
-lr_config = dict(
-    policy='step',
-    warmup='constant',
-    warmup_iters=500,
-    warmup_ratio=1.0 / 3,
-    step=[8, 11])
 checkpoint_config = dict(interval=2)
 log_config = dict(
     interval=50,
@@ -122,8 +115,18 @@ train_cfg = dict(
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
+param_scheduler = [
+    dict(
+        type='MultiStepLR',
+        begin=0,
+        end=max_epochs,
+        by_epoch=True,
+        milestones=[11],
+        gamma=0.1)
+]
+
 # runner = dict(type='EpochBasedRunner', max_epochs=6)
-auto_scale_lr = dict(base_batch_size=16)
+# auto_scale_lr = dict(base_batch_size=16)
 # device_ids = range(2)
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
