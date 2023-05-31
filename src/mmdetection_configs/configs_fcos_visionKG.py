@@ -1,5 +1,4 @@
-_base_ = ['fcos_r50-caffe_fpn_gn-head_1x_coco.py'
-]
+_base_ = ['fcos_r50-caffe_fpn_gn-head_1x_coco.py']
 
 
 # model settings
@@ -90,10 +89,12 @@ val_evaluator = dict(
     ann_file=data_root + 'mixedDatasets/val.json',
     metric='bbox',
     format_only=False,
+    interval=2,
+    save_best='bbox_mAP',
     backend_args=backend_args)
 test_evaluator = val_evaluator
 
-evaluation = dict(interval=2, metric='bbox',save_best='bbox_mAP')
+# evaluation = dict(interval=2, metric='bbox',save_best='bbox_mAP')
 # optimizer
 optimizer = dict(
     lr=0.005, paramwise_cfg=dict(bias_lr_mult=2., bias_decay_mult=0.))
@@ -115,15 +116,23 @@ train_cfg = dict(
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
+# learning rate
 param_scheduler = [
+    dict(type='ConstantLR', factor=1.0 / 3, by_epoch=False, begin=0, end=500),
     dict(
         type='MultiStepLR',
         begin=0,
-        end=max_epochs,
+        end=12,
         by_epoch=True,
-        milestones=[11],
+        milestones=[8, 11],
         gamma=0.1)
 ]
+
+# optimizer
+optim_wrapper = dict(
+    optimizer=dict(lr=0.01),
+    paramwise_cfg=dict(bias_lr_mult=2., bias_decay_mult=0.),
+    clip_grad=dict(max_norm=35, norm_type=2))
 
 # runner = dict(type='EpochBasedRunner', max_epochs=6)
 # auto_scale_lr = dict(base_batch_size=16)

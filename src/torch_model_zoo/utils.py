@@ -173,7 +173,7 @@ def checkpoint_verify(work_dir, ckpt_file=None):
         for ckpt_file in glob(work_dir + "best_bbox_mAP_epoch_*.pth"):
             if os.path.isfile(ckpt_file):
                 return os.path.abspath(ckpt_file)
-        ckpt_file = os.path.join(work_dir, "latest.pth")
+        ckpt_file = os.path.join(work_dir, "latest_ckeckpoint")
     assert os.path.isfile(ckpt_file), '{} not exist'.format(ckpt_file)
     return os.path.abspath(ckpt_file)
 
