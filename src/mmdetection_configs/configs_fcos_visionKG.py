@@ -31,6 +31,24 @@ img_norm_cfg = dict(
 
 backend_args = None
 
+train_pipeline = [
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(type='Resize', scale=(1333, 800), keep_ratio=True),
+    dict(type='RandomFlip', prob=0.5),
+    dict(type='PackDetInputs')
+]
+test_pipeline = [
+    dict(type='LoadImageFromFile', backend_args=backend_args),
+    dict(type='Resize', scale=(1333, 800), keep_ratio=True),
+    # If you don't have a gt annotation, delete the pipeline
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(
+        type='PackDetInputs',
+        meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
+                   'scale_factor'))
+]
+
 dataset_type = 'CocoDataset'
 data_root = 'data/'
 classes = ('None',)
@@ -104,6 +122,7 @@ train_cfg = dict(
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
+# runner = dict(type='EpochBasedRunner', max_epochs=6)
 auto_scale_lr = dict(base_batch_size=16)
 # device_ids = range(2)
 dist_params = dict(backend='nccl')
