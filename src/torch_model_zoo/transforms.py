@@ -212,8 +212,8 @@ class RandomZoomOut(nn.Module):
 def pil_to_tensor(pic):
     warnings.filterwarnings("ignore", category=UserWarning)
 
-    if not F_pil._is_pil_image(pic):
-        raise TypeError('pic should be PIL Image. Got {}'.format(type(pic)))
+    # if not F_pil._is_pil_image(pic):
+    #     raise TypeError('pic should be PIL Image. Got {}'.format(type(pic)))
 
     if accimage is not None and isinstance(pic, accimage.Image):
         nppic = np.zeros([pic.channels, pic.height, pic.width], dtype=np.uint8)

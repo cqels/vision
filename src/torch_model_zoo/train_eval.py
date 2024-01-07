@@ -43,7 +43,7 @@ def get_model_detection(num_classes, model='retinanet_resnet50_fpn'):
 
         model = torchvision.models.detection.retinanet_resnet50_fpn(pretrained=True)
 
-        in_features = model.head.classification_head.conv[0].in_channels
+        in_features = model.head.classification_head.conv[0][0].in_channels
         num_anchors = model.head.classification_head.num_anchors
         model.head.classification_head.num_classes = num_classes
 

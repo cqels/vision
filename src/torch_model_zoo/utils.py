@@ -173,7 +173,7 @@ def checkpoint_verify(work_dir, ckpt_file=None):
         for ckpt_file in glob(work_dir + "best_bbox_mAP_epoch_*.pth"):
             if os.path.isfile(ckpt_file):
                 return os.path.abspath(ckpt_file)
-        ckpt_file = os.path.join(work_dir, "latest_checkpoint")
+        ckpt_file = os.path.join(work_dir, "last_checkpoint")
     assert os.path.isfile(ckpt_file), '{} not exist'.format(ckpt_file)
     return os.path.abspath(ckpt_file)
 
@@ -244,7 +244,7 @@ def set_params(path_to_anno_mixedDatasets, num_categories, nms_categories):
     train_val_test = ['train.json', 'val.json', 'test.json']
     dataset_split(path_to_anno_mixedDatasets, train_val_test, ratio=0.8)
 
-    params = {'IMGS_PATH': '/data/image_dataset/coco', 'TRAIN_ANNO': 'data/mixedDatasets/train.json',
+    params = {'IMGS_PATH': 'data/image_dataset/coco', 'TRAIN_ANNO': 'data/mixedDatasets/train.json',
               'TEST_ANNO': 'data/mixedDatasets/val.json',
               'MODEL': model, 'WEIGHT_PTH': weight_pth,
               'OUTPUT_DIR': output_dir, 'BATCH_SIZE': batch_size, 'LEARNING_RATE': lr,
