@@ -32,7 +32,7 @@ class RandomHorizontalFlip(T.RandomHorizontalFlip):
         if torch.rand(1) < self.p:
             image = F.hflip(image)
             if target is not None:
-                width, _ = F._get_image_size(image)
+                width, _ = F.get_image_size(image)
                 target["boxes"][:, [0, 2]] = width - target["boxes"][:, [2, 0]]
         return image, target
 
