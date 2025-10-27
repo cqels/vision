@@ -11,6 +11,7 @@ def query(query_string, token=""):
       _data=response.json()
       data=[]
       # pprint(_data)
+      # push test
       for result in _data['results']['bindings']:
             tmp={}
             for key in result.keys():
